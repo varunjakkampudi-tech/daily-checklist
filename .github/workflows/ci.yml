@@ -17,3 +17,14 @@ jobs:
       - run: node --check assets/js/app.js
       - run: node --test tests/core.test.cjs
       - run: node -e "require('./assets/js/core.js').records(require('./tasks.json'))"
+      - run: node --check sw.js
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --package-lock=false @playwright/test@1.52.0
+      - run: npx playwright install --with-deps
+      - run: npx playwright test
