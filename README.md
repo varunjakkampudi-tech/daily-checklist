@@ -1,14 +1,14 @@
 # Daily Planner
 
+[![Quality gates](https://github.com/varunjakkampudi-tech/daily-checklist/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/varunjakkampudi-tech/daily-checklist/actions/workflows/ci.yml)
+
 A single-user, mobile-friendly personal checklist for Google Chrome. Hosted on GitHub Pages; no backend or account required.
 
 [Open planner](https://varunjakkampudi-tech.github.io/daily-checklist/) · [CI](https://github.com/varunjakkampudi-tech/daily-checklist/actions) · [Architecture](docs/architecture.md) · [Verification](docs/verification.md) · [Security](SECURITY.md)
 
-![Daily Planner logo](assets/logo.svg)
+## Application preview
 
-![Light and dark design reference](docs/assets/premium-design.svg)
-
-*Design reference, not a captured browser screenshot.*
+[Open the live planner](https://varunjakkampudi-tech.github.io/daily-checklist/) for the actual interface. Light and dark visual references are available [here](docs/assets/premium-design.svg). For real Chromium screenshots using non-sensitive test data, open a successful **Quality gates** workflow and download its `planner-previews` artifact. The visual reference is not a screenshot.
 
 ## Features
 
@@ -49,4 +49,4 @@ GitHub Pages serves main. Require successful checks for the exact release revisi
 
 The public repository and plan are visible to others. Keep sensitive tasks and notes in local browser storage; export backups regularly. No authentication, encryption or cross-device synchronization is provided. Clearing browser data can remove local tasks. See the security documentation.
 
-No production certification is implied by this README.
+
