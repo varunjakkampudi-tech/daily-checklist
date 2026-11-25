@@ -145,3 +145,18 @@ test('responsive controls and long content in both themes',async({page})=>{
     }
   }
 });
+
+test('capture documentation previews from the actual application',async({page})=>{
+  const fs=require('node:fs');
+  fs.mkdirSync('planner-previews',{recursive:true});
+  await page.goto(origin);
+  await expect(page.locator('#total')).toHaveText('1');
+  await page.locator('#appearance').evaluate(el=>{el.value='light';el.dispatchEvent(new Event('change'))});
+  await page.screenshot({path:'planner-previews/mobile-light.png',fullPage:true,animations:'disabled'});
+  await page.locator('#appearance').evaluate(el=>{el.value='dark';el.dispatchEvent(new Event('change'))});
+  await page.screenshot({path:'planner-previews/mobile-dark.png',fullPage:true,animations:'disabled'});
+  await page.setViewportSize({width:1440,height:900});
+  await page.screenshot({path:'planner-previews/desktop-dark.png',fullPage:true,animations:'disabled'});
+  await page.locator('#appearance').evaluate(el=>{el.value='light';el.dispatchEvent(new Event('change'))});
+  await page.screenshot({path:'planner-previews/desktop-light.png',fullPage:true,animations:'disabled'});
+});
