@@ -58,3 +58,32 @@ test('next day retains pending and completed tasks when a new plan arrives',asyn
   await page.locator('[data-filter=all]').click();
   await expect(page.locator('#list .task')).toHaveCount(3);
 });
+
+test('premium summary and theme toggle persist',async({page})=>{
+  await page.goto(origin);
+  await expect(page.locator('#ring-count')).toHaveText('0 of 1');
+  await expect(page.locator('#view-title')).toHaveText('Pending tasks (1)');
+  await page.locator('#manage summary').click();
+  await page.locator('#appearance').selectOption('light');
+  await expect(page.locator('body')).not.toHaveClass(/dark/);
+  await page.locator('#theme').click();
+  await expect(page.locator('body')).toHaveClass(/dark/);
+  await page.reload();
+  await expect(page.locator('body')).toHaveClass(/dark/);
+  await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content','#111b17');
+  await page.locator('#theme').click();
+  await expect(page.locator('body')).not.toHaveClass(/dark/);
+  await page.locator('[data-filter=done]').click();
+  await expect(page.locator('#view-title')).toHaveText('Completed tasks (0)');
+});
+test('both themes fit narrow mobile and desktop layouts',async({page})=>{
+  await page.goto(origin);
+  await page.locator('#manage summary').click();
+  for(const theme of ['light','dark']){
+    await page.locator('#appearance').selectOption(theme);
+    for(const width of [320,390,1440]){
+      await page.setViewportSize({width,height:900});
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+    }
+  }
+});
