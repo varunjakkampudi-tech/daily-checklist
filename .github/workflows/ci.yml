@@ -29,6 +29,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: npm install --no-save --package-lock=false @playwright/test@1.52.0
+      - run: npm install --no-save --package-lock=false @playwright/test@1.52.0 @axe-core/playwright@4.10.2
       - run: npx playwright install --with-deps chromium
       - run: npx playwright test --project=chromium
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: chromium-report
+          path: test-results/
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: planner-previews
+          path: planner-previews/
+          if-no-files-found: error
