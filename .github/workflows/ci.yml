@@ -3,11 +3,14 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -15,11 +18,12 @@ jobs:
           node-version: '22'
       - run: node --check assets/js/core.js
       - run: node --check assets/js/app.js
-      - run: node --test tests/core.test.cjs
+      - run: node --test tests/core.test.cjs tests/checklist.test.mjs
       - run: node -e "require('./assets/js/core.js').records(require('./tasks.json'))"
       - run: node --check sw.js
   browser:
-    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
