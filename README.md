@@ -1,98 +1,48 @@
 # Daily Planner
 
-A mobile-first, local-first personal productivity workspace deployed as a static web application on GitHub Pages.
+A single-user, mobile-friendly personal checklist for Google Chrome. Hosted on GitHub Pages; no backend or account required.
 
-![Runtime](https://img.shields.io/badge/Runtime-Vanilla%20JavaScript-F7DF1E) ![Storage](https://img.shields.io/badge/Storage-Versioned%20Local%20Storage-17684e) ![Hosting](https://img.shields.io/badge/Hosting-GitHub%20Pages-181717) [![Quality gates](https://github.com/varunjakkampudi-tech/daily-checklist/actions/workflows/ci.yml/badge.svg)](https://github.com/varunjakkampudi-tech/daily-checklist/actions/workflows/ci.yml)
+[Open planner](https://varunjakkampudi-tech.github.io/daily-checklist/) · [CI](https://github.com/varunjakkampudi-tech/daily-checklist/actions) · [Architecture](docs/architecture.md) · [Verification](docs/verification.md) · [Security](SECURITY.md)
 
-[Live application](https://varunjakkampudi-tech.github.io/daily-checklist/) · [Architecture](docs/architecture.md) · [Verification](docs/verification.md) · [Security](SECURITY.md) · [Changelog](CHANGELOG.md)
+![Daily Planner logo](assets/logo.svg)
 
-![Dashboard design reference](docs/assets/dashboard.svg)
+## Features
 
-*Design illustration, not a captured browser screenshot.*
+- Today's local date, active task counts and completion progress.
+- Exactly three task tabs: Pending, Completed and All.
+- Completed and All retain access to archived tasks; archived tasks can be reopened.
+- Categories, priorities, notes, recurring tasks, editing, deletion and undo.
+- Automatic/light/dark appearance, local storage, backup and recovery.
+- Offline application shell after a successful online installation.
 
-## Product scope
+## Run locally
 
-| Domain | Capability |
-| --- | --- |
-| Today | Categorized tasks, priority, progress, completion and undo |
-| Lifecycle | Carry-forward, archive, restore, defer and resume |
-| Planning | Custom categories, notes, completion-relative daily and weekly recurrence |
-| Insights | Completion counts over 1, 7 and 30 days; category breakdown; completion-day streak |
-| Appearance | Automatic local-time appearance, light and dark preferences, reduced-motion feedback |
-| Portability | Versioned backup, validated restore, legacy import and recovery export |
-| Delivery | Public JSON plan, installable manifest, scoped offline shell |
+Use Node.js 22 and Python 3.
 
-No backend, database, authentication or cross-device synchronization is in scope. Public task descriptions must be non-sensitive. Private edits, notes and completion state stay in browser storage. Dates are not displayed on the primary checklist.
-
-## Architecture
-
-```mermaid
-flowchart LR
-  AI[Daily planning automation] --> JSON[Public tasks.json]
-  JSON --> UI[Browser application]
-  UI --> CORE[Pure task model]
-  CORE --> STATE[Versioned state]
-  STATE --> LS[(Local Storage)]
-  STATE --> HISTORY[Archive and insights]
-  STATE --> FILE[Backup and recovery]
-  PAGES[GitHub Pages] --> UI
-  SW[Scoped service worker] --> UI
-```
-
-The state envelope contains active tasks, archive and previously seen identifiers. The client merges unseen plan IDs, preserves local edits, and archives completed tasks after the local day changes. Recurrence is completion-relative, not a calendar alarm. Missed occurrences do not create a backlog. See the architecture document for constraints and failure handling.
-
-## Repository layout
-
-```text
-index.html
-manifest.webmanifest
-sw.js
-tasks.json
-tasks.example.json
-assets/
-  logo.svg
-  focus.svg
-  css/main.css
-  js/core.js
-  js/app.js
-tests/
-  core.test.cjs
-  browser/planner.spec.cjs
-playwright.config.cjs
-.github/workflows/ci.yml
-docs/
-  architecture.md
-  verification.md
-  assets/dashboard.svg
-README.md
-SECURITY.md
-CHANGELOG.md
-```
-
-## Development
-
-```bash
-python3 -m http.server 8000
-node --test tests/core.test.cjs
+```sh
+node --test tests/core.test.cjs tests/checklist.test.mjs
 npm install --no-save --package-lock=false @playwright/test@1.52.0
-npx playwright install --with-deps
-npx playwright test
+npx playwright install --with-deps chromium
+npx playwright test --project=chromium
 ```
 
-Run the browser suite with port 8000 free; its configuration starts a local server. Runtime dependencies are not required.
+Playwright starts its own local server on port 8000. For manual use, run `python3 -m http.server 8000` separately.
 
-## Deployment
+## Structure
 
-GitHub Pages serves the root of main. The service worker uses a versioned, scope-restricted application shell; the task manifest remains network-only. Bump the shell cache version when changing cached application assets. Reopen the application after a deployment and verify task loading, completion, reload and offline behavior.
+- `index.html`, `assets/css/main.css`: interface.
+- `assets/js/core.js`: validation, migration, merging and recurrence.
+- `assets/js/app.js`: browser events, rendering and persistence.
+- `tasks.json`: public plan managed externally.
+- `sw.js`, `manifest.webmanifest`: offline shell and installation metadata.
+- `tests/`, `playwright.config.cjs`, `.github/workflows/`: automated verification.
 
-## Verification status
+## Release
 
-Data-model assertions have been exercised during development. Node and three-engine Playwright quality gates are configured; consult actual workflow results for the current revision. Physical iPhone testing, Lighthouse measurements, WCAG assessment and deployment acceptance are not claimed without evidence.
+GitHub Pages serves main. Require successful checks for the exact release revision, then verify the deployed planner. Bump the shell cache version when updating cached assets. Browser coverage targets Chromium, not Firefox or WebKit.
 
-## Security
+## Data and privacy
 
-The application does not encrypt local storage or synchronize it across devices. Export a backup periodically. The public Git repository must never contain private notes, employer information or financial records. See SECURITY.md.
+The public repository and plan are visible to others. Keep sensitive tasks and notes in local browser storage; export backups regularly. No authentication, encryption or cross-device synchronization is provided. Clearing browser data can remove local tasks. See the security documentation.
 
-## Maintainer
-
-[Repository owner](https://github.com/varunjakkampudi-tech). No open-source license has been selected.
+No production certification is implied by this README.
