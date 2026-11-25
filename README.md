@@ -25,7 +25,7 @@ Use Node.js 22 and Python 3.
 
 ```sh
 node --test tests/core.test.cjs tests/checklist.test.mjs
-npm install --no-save --package-lock=false @playwright/test@1.52.0
+npm install --no-save --package-lock=false @playwright/test@1.52.0 @axe-core/playwright@4.10.2
 npx playwright install --with-deps chromium
 npx playwright test --project=chromium
 ```
@@ -43,7 +43,7 @@ Playwright starts its own local server on port 8000. For manual use, run `python
 
 ## Release
 
-GitHub Pages serves main. Require successful checks for the exact release revision, then verify the deployed planner. Bump the shell cache version when updating cached assets. Browser coverage targets Chromium, not Firefox or WebKit.
+GitHub Pages serves main. Require successful checks for the exact release revision, then verify the deployed planner. Bump the shell cache version when updating cached assets. Browser coverage targets Chromium, not Firefox or WebKit. Automated axe checks target WCAG 2.1 A/AA rules; keyboard tests and responsive checks complement them. Automated tests do not certify full accessibility.
 
 ## Data and privacy
 
