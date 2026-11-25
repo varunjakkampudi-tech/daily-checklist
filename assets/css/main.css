@@ -17,4 +17,4 @@
 
 .today-date{display:block;font-size:13px;font-weight:650;color:#c0dfce;margin:0 0 9px;letter-spacing:.2px}
 
-#quick-add{margin-left:auto;background:var(--accent);color:var(--panel);border:0;white-space:nowrap;font-size:13px} .toolbar h2{flex:1} @media(max-width:380px){.toolbar h2{font-size:18px}}
+#quick-add{margin-left:auto;background:var(--accent);color:var(--panel);border:0;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;display:grid;place-items:center;flex:none}#quick-add svg{display:block;width:22px;height:22px} .toolbar h2{flex:1} @media(max-width:380px){.toolbar h2{font-size:18px}}
