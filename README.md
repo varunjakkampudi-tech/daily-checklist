@@ -17,7 +17,7 @@
 
 Daily Checklist consolidates professional, personal and business activities into a single mobile-oriented workspace. The application provides task lifecycle management, categorized prioritization and derived completion metrics without a server dependency.
 
-The current delivery is a static, browser-local implementation. Authenticated synchronization and automated daily planning are separate, planned capabilities.
+The current delivery is a static, browser-local implementation. The application uses a static public JSON plan and browser-local completion state. No backend or database is required or planned for the current scope.
 
 ## Functional scope
 
@@ -29,8 +29,8 @@ The current delivery is a static, browser-local implementation. Authenticated sy
 | Presentation | Responsive layout and theme selection | Implemented |
 | Persistence | Local storage and restoration | Implemented |
 | Portability | Validated JSON import and export | Implemented |
-| Daily planning | Automated private task delivery | Planned |
-| Synchronization | Authenticated cross-device persistence | Planned |
+| Daily planning | Public JSON plan refresh with stable IDs | Implemented |
+| Synchronization | Cross-device completion | Out of scope |
 
 Implementation labels describe source availability, not independently verified production acceptance.
 
@@ -45,6 +45,7 @@ flowchart LR
     V --> U
     S -->|Persist| L[(Local storage)]
     L -->|Restore and validate| S
+    Q[Public tasks.json] -->|Fetch and merge unseen IDs| S
     J[JSON backup] -->|Import and merge| S
     S -->|Export| J
 ```
@@ -92,13 +93,14 @@ No runtime packages, external fonts, analytics services or build step are requir
 | priority | enum | High, Normal, Low |
 | done | boolean | Completion state |
 
-The collection is limited to 500 tasks. Import rejects duplicate IDs and preserves existing records when identifiers match. Refer to [example data](tasks.example.json) for the import format.
+The public plan is fetched on startup and through Refresh plan. New identifiers are appended; previously seen identifiers (including locally deleted tasks) are not reintroduced. Removing a record from the public plan does not delete the local copy. Use a new identifier for a genuinely recurring task. The collection is limited to 500 tasks. Import rejects duplicate IDs and preserves existing records when identifiers match. Refer to [example data](tasks.example.json) for the import format.
 
 ## Repository layout
 
 ```text
 daily-checklist/
 ├── index.html
+├── tasks.json
 ├── tasks.example.json
 ├── .nojekyll
 ├── README.md
@@ -142,9 +144,9 @@ The repository and hosted frontend are public. Personal checklists, employer dat
 | --- | --- | --- |
 | 1 | Static frontend and browser-local task lifecycle | Implemented; acceptance pending |
 | 2 | Modular source, automated tests and CI | Planned |
-| 3 | Authenticated private API and task database | Planned |
-| 4 | Daily AI planning, carry-forward and reconciliation | Planned |
-| 5 | Cross-device synchronization and operational monitoring | Planned |
+| 3 | Static plan delivery and local progress preservation | Implemented; acceptance pending |
+| 4 | Scheduled public-safe plan updates | Pending automation configuration |
+| 5 | Database and cross-device synchronization | Out of scope |
 
 No planned capability is represented as currently operational.
 
