@@ -1,162 +1,98 @@
-# Daily Checklist
+# Daily Planner
 
-**A mobile-first personal task management and productivity dashboard.**
+A mobile-first, local-first personal productivity workspace deployed as a static web application on GitHub Pages.
 
-![Architecture](https://img.shields.io/badge/Architecture-Static%20Web-243c58)
-![Runtime](https://img.shields.io/badge/Runtime-Vanilla%20JavaScript-F7DF1E)
-![Storage](https://img.shields.io/badge/Storage-Browser%20Local-087f68)
-![Hosting](https://img.shields.io/badge/Hosting-GitHub%20Pages-181717)
+![Runtime](https://img.shields.io/badge/Runtime-Vanilla%20JavaScript-F7DF1E) ![Storage](https://img.shields.io/badge/Storage-Versioned%20Local%20Storage-17684e) ![Hosting](https://img.shields.io/badge/Hosting-GitHub%20Pages-181717) [![Quality gates](https://github.com/varunjakkampudi-tech/daily-checklist/actions/workflows/ci.yml/badge.svg)](https://github.com/varunjakkampudi-tech/daily-checklist/actions/workflows/ci.yml)
 
-[Application](https://varunjakkampudi-tech.github.io/daily-checklist/) · [Architecture](docs/architecture.md) · [Verification](docs/verification.md) · [Security](SECURITY.md)
+[Live application](https://varunjakkampudi-tech.github.io/daily-checklist/) · [Architecture](docs/architecture.md) · [Verification](docs/verification.md) · [Security](SECURITY.md) · [Changelog](CHANGELOG.md)
 
-![Conceptual desktop and mobile dashboard illustration](docs/assets/dashboard.svg)
+![Dashboard design reference](docs/assets/dashboard.svg)
 
-*Design illustration using synthetic data; not a captured runtime screenshot.*
+*Design illustration, not a captured browser screenshot.*
 
-## Overview
+## Product scope
 
-Daily Checklist consolidates professional, personal and business activities into a single mobile-oriented workspace. The application provides task lifecycle management, categorized prioritization and derived completion metrics without a server dependency.
+| Domain | Capability |
+| --- | --- |
+| Today | Categorized tasks, priority, progress, completion and undo |
+| Lifecycle | Carry-forward, archive, restore, defer and resume |
+| Planning | Custom categories, notes, completion-relative daily and weekly recurrence |
+| Insights | Completion counts over 1, 7 and 30 days; category breakdown; completion-day streak |
+| Appearance | Automatic local-time appearance, light and dark preferences, reduced-motion feedback |
+| Portability | Versioned backup, validated restore, legacy import and recovery export |
+| Delivery | Public JSON plan, installable manifest, scoped offline shell |
 
-The current delivery is a static, browser-local implementation. The application uses a static public JSON plan and browser-local completion state. No backend or database is required or planned for the current scope.
+No backend, database, authentication or cross-device synchronization is in scope. Public task descriptions must be non-sensitive. Private edits, notes and completion state stay in browser storage. Dates are not displayed on the primary checklist.
 
-## Functional scope
-
-| Domain | Capability | Implementation |
-| --- | --- | --- |
-| Task management | Create, edit, complete, reopen and delete | Implemented |
-| Organization | Category panels, completion counters and priority ordering | Implemented |
-| Analytics | Total, pending, completed and completion percentage | Implemented |
-| Presentation | Responsive category panels, icon controls and theme selection | Implemented |
-| Persistence | Local storage and restoration | Implemented |
-| Portability | Validated JSON import and export | Implemented |
-| Daily planning | Public JSON plan refresh with stable IDs | Implemented |
-| Synchronization | Cross-device completion | Out of scope |
-
-Implementation labels describe source availability, not independently verified production acceptance.
-
-## Interface design
-
-The forest-green dashboard uses custom vector branding, compact icon controls, visually distinct category panels, category-level completion counters, and a collapsible management area. Search is intentionally omitted. Appearance follows device-local time (light from 06:00 to 18:00, dark otherwise), with a temporary manual override until the next day/night boundary or reload. Task completion triggers a brief checkmark and particle celebration; completing the entire list triggers a milestone notification. Motion effects respect prefers-reduced-motion. Task actions retain accessible names; operational warnings appear only when relevant. The illustration above is a design reference, not a browser screenshot.
-
-## System architecture
+## Architecture
 
 ```mermaid
 flowchart LR
-    P[GitHub Pages] -->|Static HTTPS assets| U[Browser UI]
-    U --> H[Event handlers]
-    H --> S[Task state]
-    S --> V[Derived views and metrics]
-    V --> U
-    S -->|Persist| L[(Local storage)]
-    L -->|Restore and validate| S
-    Q[Public tasks.json] -->|Fetch and merge unseen IDs| S
-    J[JSON backup] -->|Import and merge| S
-    S -->|Export| J
+  AI[Daily planning automation] --> JSON[Public tasks.json]
+  JSON --> UI[Browser application]
+  UI --> CORE[Pure task model]
+  CORE --> STATE[Versioned state]
+  STATE --> LS[(Local Storage)]
+  STATE --> HISTORY[Archive and insights]
+  STATE --> FILE[Backup and recovery]
+  PAGES[GitHub Pages] --> UI
+  SW[Scoped service worker] --> UI
 ```
 
-The presentation, validation, task state and persistence logic are colocated in the standalone frontend. These are logical responsibilities rather than independently deployed services. See the [architecture document](docs/architecture.md) for design decisions, data lifecycle, risks and the proposed future architecture.
-
-## Application workflow
-
-```mermaid
-flowchart TD
-    A[Open application] --> B[Load browser storage]
-    B --> C{Valid stored data?}
-    C -->|Yes| D[Render tasks and metrics]
-    C -->|No| E[Show empty view and warning if invalid]
-    E --> D
-    D --> F[Create, edit, complete or reopen task]
-    F --> G[Mutate in-memory state]
-    G --> H{Persistence successful?}
-    H -->|Yes| D
-    H -->|No| I[Show storage warning]
-    I --> D
-```
-
-## Technology stack
-
-| Layer | Technology |
-| --- | --- |
-| Presentation | Semantic HTML, responsive CSS |
-| Application | Native JavaScript and DOM APIs |
-| Persistence | Web Storage API |
-| Identifiers | Web Crypto API |
-| Data exchange | JSON and browser File/Blob APIs |
-| Hosting | GitHub Pages |
-| Version control | Git and GitHub |
-
-No runtime packages, external fonts, analytics services or build step are required.
-
-## Data model
-
-| Field | Type | Constraint |
-| --- | --- | --- |
-| id | string | Unique within the collection |
-| title | string | Non-blank, maximum 240 characters |
-| category | enum | Work, Content, Personal, Finance, Business, Other |
-| priority | enum | High, Normal, Low |
-| done | boolean | Completion state |
-
-The public plan is fetched on startup and through Refresh plan. New identifiers are appended; previously seen identifiers (including locally deleted tasks) are not reintroduced. Removing a record from the public plan does not delete the local copy. Use a new identifier for a genuinely recurring task. The collection is limited to 500 tasks. Import rejects duplicate IDs and preserves existing records when identifiers match. Refer to [example data](tasks.example.json) for the import format.
+The state envelope contains active tasks, archive and previously seen identifiers. The client merges unseen plan IDs, preserves local edits, and archives completed tasks after the local day changes. Recurrence is completion-relative, not a calendar alarm. Missed occurrences do not create a backlog. See the architecture document for constraints and failure handling.
 
 ## Repository layout
 
 ```text
-daily-checklist/
-├── index.html
-├── assets/
-│   ├── logo.svg
-│   └── focus.svg
-├── tasks.json
-├── tasks.example.json
-├── .nojekyll
-├── README.md
-├── SECURITY.md
-└── docs/
-    ├── architecture.md
-    ├── verification.md
-    └── assets/
-        └── dashboard.svg
+index.html
+manifest.webmanifest
+sw.js
+tasks.json
+tasks.example.json
+assets/
+  logo.svg
+  focus.svg
+  css/main.css
+  js/core.js
+  js/app.js
+tests/
+  core.test.cjs
+  browser/planner.spec.cjs
+playwright.config.cjs
+.github/workflows/ci.yml
+docs/
+  architecture.md
+  verification.md
+  assets/dashboard.svg
+README.md
+SECURITY.md
+CHANGELOG.md
 ```
 
-## Local development
-
-Prerequisites: Git, Python 3 (or another static HTTP server), and a modern browser.
+## Development
 
 ```bash
-git clone https://github.com/varunjakkampudi-tech/daily-checklist.git
-cd daily-checklist
-python -m http.server 8000
+python3 -m http.server 8000
+node --test tests/core.test.cjs
+npm install --no-save --package-lock=false @playwright/test@1.52.0
+npx playwright install --with-deps
+npx playwright test
 ```
 
-Open http://localhost:8000. No dependency installation is necessary. Localhost or HTTPS is recommended for the Web Crypto API.
+Run the browser suite with port 8000 free; its configuration starts a local server. Runtime dependencies are not required.
 
-## Deployment and operations
+## Deployment
 
-The deployment target is GitHub Pages using the root of the main branch. The .nojekyll marker enables direct static asset serving. Repository administrators configure Pages under Settings → Pages.
+GitHub Pages serves the root of main. The service worker uses a versioned, scope-restricted application shell; the task manifest remains network-only. Bump the shell cache version when changing cached application assets. Reopen the application after a deployment and verify task loading, completion, reload and offline behavior.
 
-Validate the deployed application after each release: load the site, confirm asset availability, perform a task lifecycle operation and reload to verify persistence. Roll back defective changes by reverting the relevant Git commit and verifying the resulting deployment.
+## Verification status
 
-## Quality and verification
+Data-model assertions have been exercised during development. Node and three-engine Playwright quality gates are configured; consult actual workflow results for the current revision. Physical iPhone testing, Lighthouse measurements, WCAG assessment and deployment acceptance are not claimed without evidence.
 
-The [verification plan](docs/verification.md) defines functional, persistence, import, responsive and accessibility acceptance criteria. Automated regression tests, measured performance and device-specific acceptance are not yet established.
+## Security
 
-## Security and privacy
-
-The repository and hosted frontend are public. Personal checklists, employer data and credentials must never be committed. Browser local storage is not encrypted by the application and is not an authenticated data store. JSON backups contain readable task data. See [security policy](SECURITY.md).
-
-## Engineering roadmap
-
-| Phase | Deliverable | Status |
-| --- | --- | --- |
-| 1 | Static frontend and browser-local task lifecycle | Implemented; acceptance pending |
-| 2 | Modular source, automated tests and CI | Planned |
-| 3 | Static plan delivery and local progress preservation | Implemented; acceptance pending |
-| 4 | Scheduled public-safe plan updates | Pending automation configuration |
-| 5 | Database and cross-device synchronization | Out of scope |
-
-No planned capability is represented as currently operational.
+The application does not encrypt local storage or synchronize it across devices. Export a backup periodically. The public Git repository must never contain private notes, employer information or financial records. See SECURITY.md.
 
 ## Maintainer
 
-[Repository owner](https://github.com/varunjakkampudi-tech). No open-source license has been selected; public visibility alone does not grant reuse rights.
+[Repository owner](https://github.com/varunjakkampudi-tech). No open-source license has been selected.
