@@ -1,18 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
-import vm from 'node:vm';
-const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
-const plan=JSON.parse(readFileSync(new URL('../tasks.json',import.meta.url),'utf8'));
-const script=html.match(/<script>([\s\S]*?)<\/script>/)[1];
-function harness(){
- const storage=new Map(), nodes=new Map();
- const node=()=>({value:'',textContent:'',disabled:false,children:[],append(...x){this.children.push(...x)},replaceChildren(){this.children=[]},setAttribute(){},classList:{toggle(){return false}},querySelector(){return node()},reset(){},focus(){}});
- const document={getElementById(id){if(!nodes.has(id))nodes.set(id,node());return nodes.get(id)},createElement:node,querySelectorAll(){return []},body:node()};
- const context=vm.createContext({document,localStorage:{getItem:k=>storage.get(k)??null,setItem:(k,v)=>storage.set(k,v)},fetch:async()=>({ok:true,text:async()=>JSON.stringify(plan)}),console,crypto:{randomUUID:()=> 'local-test'},confirm:()=>true});
- vm.runInContext(script,context);
- return {context,storage,nodes,run:code=>vm.runInContext(code,context)};
-}
-test('static plan follows schema and has unique identifiers',()=>{assert.ok(plan.length<=500);assert.equal(new Set(plan.map(x=>x.id)).size,plan.length);for(const x of plan){assert.ok(typeof x.id==='string'&&x.id);assert.ok(typeof x.title==='string'&&x.title.trim()&&x.title.length<=240);assert.ok(['Work','Content','Personal','Finance','Business','Other'].includes(x.category));assert.ok(['High','Normal','Low'].includes(x.priority));assert.equal(x.done,false)}});
-test('startup loads plan and refresh preserves completion and deleted IDs',async()=>{const h=harness();await h.run('refreshPlan()');assert.equal(h.run('tasks.length'),plan.length);h.run('tasks[0].done=true; save()');await h.run('refreshPlan()');assert.equal(h.run('tasks[0].done'),true);h.run('seen.add(tasks[0].id);tasks.shift();save()');await h.run('refreshPlan()');assert.equal(h.run('tasks.length'),plan.length-1)});
-test('invalid and duplicate plan records rejected',async()=>{const h=harness();await h.run('refreshPlan()');assert.throws(()=>h.run("decode('[{}]')"));assert.throws(()=>h.run('decode(JSON.stringify([tasks[0],tasks[0]]))'))});
+import {readFileSync,existsSync} from 'node:fs';
+import C from '../assets/js/core.js';
+const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const plan=JSON.parse(read('tasks.json'));
+test('public plan is valid, unique and pending',()=>{assert.deepEqual(C.records(plan).map(t=>t.id),plan.map(t=>t.id));assert.ok(plan.every(t=>!t.done&&C.categories.includes(t.category)))});
+test('static application references existing assets',()=>{const html=read('index.html');for(const match of html.matchAll(/(?:src|href)="\.\/([^"]+)"/g)){assert.ok(existsSync(new URL('../'+match[1],import.meta.url)),match[1])}assert.match(html,/src="\.\/assets\/js\/core\.js"[\s\S]*src="\.\/assets\/js\/app\.js"/)});
+test('refresh preserves completions and deletion markers',()=>{const sample={id:'fixture',title:'Fixture',category:'Work',priority:'High',done:false};const s=C.merge(C.empty(),[sample],'2026-11-26').state;s.tasks[0].done=true;s.tasks[0].completedDay='2026-11-26';assert.equal(C.merge(s,[sample],'2026-11-26').state.tasks[0].done,true);s.tasks=[];assert.equal(C.merge(s,[sample],'2026-11-26').count,0)});
+test('invalid and duplicate records rejected',()=>{assert.throws(()=>C.records([{}]));assert.throws(()=>C.records([plan[0],plan[0]]))});
