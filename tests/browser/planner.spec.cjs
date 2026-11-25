@@ -32,3 +32,29 @@ test('header date is local and visible',async({page})=>{
   await page.goto(origin);const date=await page.evaluate(()=>new Intl.DateTimeFormat('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date()));
   await expect(page.locator('#today-date')).toHaveText(date);await expect(page.locator('#today-date')).toBeVisible();
 });
+
+test('add icon is centered in its wrapper',async({page})=>{
+  await page.goto(origin);
+  const button=await page.locator('#quick-add').boundingBox(),icon=await page.locator('#quick-add svg').boundingBox();
+  expect(Math.abs(button.x+button.width/2-icon.x-icon.width/2)).toBeLessThanOrEqual(1);
+  expect(Math.abs(button.y+button.height/2-icon.y-icon.height/2)).toBeLessThanOrEqual(1);
+});
+test('next day retains pending and completed tasks when a new plan arrives',async({page})=>{
+  await page.goto(origin);
+  await expect(page.locator('#total')).toHaveText('1');
+  await page.evaluate(()=>localStorage.setItem('daily-checklist:v2',JSON.stringify({version:2,tasks:[{id:'test-timesheet',title:'Submit timesheet',category:'Work',priority:'High',done:true,completedDay:'2020-01-01'},{id:'old-pending',title:'Old pending task',category:'Personal',priority:'Normal',done:false}],archive:[],seen:['test-timesheet','old-pending']})));
+  await page.unroute('**/tasks.json?*');
+  await page.route('**/tasks.json?*',route=>route.fulfill({json:[...fixture,{id:'new-tomorrow',title:'New daily task',category:'Work',priority:'Normal',done:false}]}));
+  await page.reload();
+  await expect(page.locator('#total')).toHaveText('3');
+  await expect(page.locator('#done')).toHaveText('1');
+  await expect(page.locator('#pending')).toHaveText('2');
+  await expect(page.getByRole('button',{name:'Complete Old pending task',exact:true})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Complete New daily task',exact:true})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Reopen Submit timesheet',exact:true})).toHaveCount(0);
+  await page.locator('[data-filter=done]').click();
+  await expect(page.getByRole('button',{name:'Reopen Submit timesheet',exact:true})).toBeVisible();
+  await expect(page.locator('#list .task')).toHaveCount(1);
+  await page.locator('[data-filter=all]').click();
+  await expect(page.locator('#list .task')).toHaveCount(3);
+});
