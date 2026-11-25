@@ -113,3 +113,17 @@ textarea{resize:vertical}
 @media(min-width:800px){.workspace{grid-template-columns:minmax(0,1fr) 300px;align-items:start}.sidebar{position:sticky;top:18px}.overview{grid-template-columns:150px 1fr}.stat small{font-size:14px}}
 @media(max-width:420px){.overview{grid-template-columns:76px minmax(0,1fr);padding:14px 10px;gap:8px;border-radius:20px}.ring{width:74px;height:74px}.ring>span{width:62px;height:62px}.ring b{font-size:20px}.ring small{font-size:10px}.stat small{font-size:10px}.stat strong{font-size:22px}.toolbar h2{font-size:18px}.toolbar{gap:8px}.task{padding:5px;gap:0}.task .icon{width:40px;min-width:40px}.toggle{gap:8px}.label{font-size:14px}.hero img{opacity:.45}.hero h1,.intro{max-width:100%}}
 @media(prefers-reduced-motion:no-preference){button{transition:background .15s,color .15s}.celebration{transition:opacity .2s,transform .2s}}
+
+/* Final visual refinement: real settings control and compact category labels. */
+.header-actions{display:flex;align-items:center;gap:8px;flex:none}
+#settings{display:grid;place-items:center;width:44px;height:44px;padding:0;flex:none;border-radius:50%;box-shadow:var(--shadow)}
+#settings svg{width:21px;height:21px}
+.stat svg{display:block;width:22px;height:22px;margin:0 auto 5px;color:#d4e7dc}
+.stat:nth-child(2) svg{color:#a9efb9}
+.stat:nth-child(3) svg{color:#f4d18b}
+.task-category{margin-left:auto;flex:none;max-width:35%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:4px 9px;border-radius:30px;background:var(--tint);color:var(--group);font-size:11px;font-weight:650;text-decoration:none}
+.task .label{flex:1}
+.task.done .label{text-decoration:none}
+.task.done .label:first-line{text-decoration:line-through}
+@media(max-width:480px){.brand{font-size:19px;gap:8px}.brand img{width:40px;height:40px}.brand small{font-size:10px}.top{gap:6px}.header-actions{gap:6px}.task-category{max-width:100%;margin:0;grid-column:2;justify-self:start}.toggle{display:grid;grid-template-columns:25px minmax(0,1fr);gap:4px 8px}.toggle .circle{grid-row:1 / span 2}.task .icon{width:44px;min-width:44px}.stat svg{width:19px;height:19px}.hero img{opacity:.32}}
+@media(max-width:350px){.brand small{display:none}.brand{font-size:17px}.brand img{width:36px;height:36px}.header-actions{gap:4px}.task .icon{width:44px;min-width:44px}.task-category{font-size:10px}}
