@@ -1,5 +1,12 @@
 # Changelog
 
+## Premium visual refresh
+
+- Rebuilt responsive CSS with shared light and dark design tokens.
+- Compact progress overview, updated botanical branding and three-task-tab layout.
+- Persistent header theme toggle and filter-specific headings.
+- Updated release artwork and Chromium regression coverage.
+
 ## Personal Chrome planner
 
 - Local date in the header; exactly three task tabs.
