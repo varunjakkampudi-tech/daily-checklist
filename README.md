@@ -36,7 +36,7 @@ Implementation labels describe source availability, not independently verified p
 
 ## Interface design
 
-The forest-green dashboard uses custom vector branding, compact icon controls, visually distinct category panels, category-level completion counters, and a collapsible management area. Search is intentionally omitted. Task actions retain accessible names; operational warnings appear only when relevant. The illustration above is a design reference, not a browser screenshot.
+The forest-green dashboard uses custom vector branding, compact icon controls, visually distinct category panels, category-level completion counters, and a collapsible management area. Search is intentionally omitted. Appearance follows device-local time (light from 06:00 to 18:00, dark otherwise), with a temporary manual override until the next day/night boundary or reload. Task completion triggers a brief checkmark and particle celebration; completing the entire list triggers a milestone notification. Motion effects respect prefers-reduced-motion. Task actions retain accessible names; operational warnings appear only when relevant. The illustration above is a design reference, not a browser screenshot.
 
 ## System architecture
 
