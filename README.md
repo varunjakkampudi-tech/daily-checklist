@@ -6,13 +6,17 @@ A single-user, mobile-friendly personal checklist for Google Chrome. Hosted on G
 
 ![Daily Planner logo](assets/logo.svg)
 
+![Light and dark design reference](docs/assets/premium-design.svg)
+
+*Design reference, not a captured browser screenshot.*
+
 ## Features
 
-- Today's local date, active task counts and completion progress.
+- Today's local date, cumulative task counts and completion progress.
 - Exactly three task tabs: Pending, Completed and All.
 - Completed and All retain access to archived tasks; archived tasks can be reopened.
 - Categories, priorities, notes, recurring tasks, editing, deletion and undo.
-- Automatic/light/dark appearance, local storage, backup and recovery.
+- Premium cream-and-emerald light theme, charcoal-and-emerald dark theme, automatic local-time appearance, persistent theme toggle, local storage, backup and recovery.
 - Offline application shell after a successful online installation.
 
 ## Run locally
