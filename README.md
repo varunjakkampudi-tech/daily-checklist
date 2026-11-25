@@ -4,8 +4,6 @@ A single-user, mobile-friendly personal checklist for Google Chrome. Hosted on G
 
 [Open planner](https://varunjakkampudi-tech.github.io/daily-checklist/) · [CI](https://github.com/varunjakkampudi-tech/daily-checklist/actions) · [Architecture](docs/architecture.md) · [Verification](docs/verification.md) · [Security](SECURITY.md)
 
-<img src="assets/logo.svg" alt="Daily Planner logo" width="48" height="48">
-
 ## Features
 
 - Today's local date, cumulative task counts and completion progress.

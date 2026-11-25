@@ -75,5 +75,12 @@
     "category": "Personal",
     "priority": "Normal",
     "done": false
+  },
+  {
+    "id": "business-factori-price-followup-2026-11-26",
+    "title": "Email Factori team to follow up on price update completion",
+    "category": "Business",
+    "priority": "Normal",
+    "done": false
   }
 ]

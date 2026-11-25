@@ -9,3 +9,5 @@ The repository does not claim physical-device, formal accessibility or performan
 Rollback verification: confirm the original three-tab interface, a fresh-profile plan load, and existing-profile completion preservation. Check published tasks.json separately from local browser state; do not reset local storage to troubleshoot a cache issue.
 
 Static asset checks accept versioned script URLs while still checking their files and core-before-controller order. A release must keep the public task manifest unchanged unless a task update is explicitly requested.
+
+Maintenance baseline 39463dc: both quality workflows and GitHub Pages deployment succeeded. Subsequent task or documentation changes require fresh checks; historical successes are not evidence of a new deployment.
