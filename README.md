@@ -4,16 +4,20 @@ A single-user, mobile-friendly personal checklist for Google Chrome. Hosted on G
 
 [Open planner](https://varunjakkampudi-tech.github.io/daily-checklist/) · [CI](https://github.com/varunjakkampudi-tech/daily-checklist/actions) · [Architecture](docs/architecture.md) · [Verification](docs/verification.md) · [Security](SECURITY.md)
 
-![Daily Planner logo](assets/logo.svg)
+<img src="assets/logo.svg" alt="Daily Planner logo" width="48" height="48">
 
 ## Features
 
-- Today's local date, active task counts and completion progress.
+- Today's local date, cumulative task counts and completion progress.
 - Exactly three task tabs: Pending, Completed and All.
 - Completed and All retain access to archived tasks; archived tasks can be reopened.
 - Categories, priorities, notes, recurring tasks, editing, deletion and undo.
 - Automatic/light/dark appearance, local storage, backup and recovery.
 - Offline application shell after a successful online installation.
+
+## Missing tasks or an empty list
+
+Open All or Completed to check whether tasks have already been completed. Use the refresh icon to merge new public plan entries. Deleted task IDs are deliberately remembered to prevent deleted tasks returning. Local tasks and completion history are specific to the browser profile; private browsing does not share them. Do not clear site data to refresh the UI. Export a backup before restoring data.
 
 ## Run locally
 

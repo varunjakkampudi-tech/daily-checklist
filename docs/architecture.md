@@ -38,7 +38,7 @@ Unfinished tasks remain active. Daily and weekly recurrence creates one new occu
 
 ## Reliability
 
-The state envelope is saved in one localStorage write. Corrupt state blocks ordinary persistence; recovery export exposes raw stored values to the owner. Full restore requires confirmation and preserves the prior v2 raw value in a recovery key when storage permits. Legacy array imports merge unseen IDs. Refresh never removes local tasks. Storage events adopt external valid state; a pre-write comparison detects stale snapshots, but localStorage lacks atomic compare-and-swap and simultaneous writes can still race. Separate devices are not synchronized.
+The state envelope is saved in one localStorage write. Corrupt state blocks ordinary persistence; recovery export exposes raw stored values to the owner. Full restore requires confirmation and preserves the prior v2 raw value in a recovery key when storage permits. Legacy array imports merge unseen IDs. Refresh never removes local tasks. Seen IDs suppress re-import of deleted or completed plan items; an empty Pending view does not necessarily mean the public plan is missing. Storage events adopt external valid state; a pre-write comparison detects stale snapshots, but localStorage lacks atomic compare-and-swap and simultaneous writes can still race. Separate devices are not synchronized.
 
 ## Offline and delivery
 
