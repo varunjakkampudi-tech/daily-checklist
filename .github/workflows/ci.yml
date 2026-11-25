@@ -1,0 +1,19 @@
+name: Quality gates
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check assets/js/core.js
+      - run: node --check assets/js/app.js
+      - run: node --test tests/core.test.cjs
+      - run: node -e "require('./assets/js/core.js').records(require('./tasks.json'))"
