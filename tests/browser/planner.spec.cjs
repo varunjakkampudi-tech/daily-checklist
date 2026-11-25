@@ -87,3 +87,12 @@ test('both themes fit narrow mobile and desktop layouts',async({page})=>{
     }
   }
 });
+
+test('settings shortcut and category labels work without extra tabs',async({page})=>{
+  await page.goto(origin);
+  await expect(page.locator('.tabs button')).toHaveCount(3);
+  await expect(page.locator('.task-category')).toHaveText('Work');
+  await page.getByRole('button',{name:'Settings',exact:true}).click();
+  await expect(page.locator('#appearance')).toBeFocused();
+  await expect(page.locator('#appearance')).toBeVisible();
+});
