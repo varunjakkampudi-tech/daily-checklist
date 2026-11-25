@@ -4,167 +4,191 @@
     "title": "Complete pending GCP technical support case",
     "category": "Work",
     "priority": "High",
-    "done": false
+    "done": false,
+    "notes": "Collect the last two weeks of order delivery delay evidence from New Relic and GCP. Summarize findings, draft the support case, and obtain internal review before submission."
   },
   {
     "id": "work-time",
     "title": "Submit timesheet",
     "category": "Work",
     "priority": "High",
-    "done": false
+    "done": false,
+    "notes": "Review the hours for the current timesheet period, correct any missing entries and submit before the deadline."
   },
   {
     "id": "work-career",
     "title": "Follow up with HR on promotion and career progression",
     "category": "Work",
     "priority": "High",
-    "done": false
+    "done": false,
+    "notes": "Follow up with HR and the relevant manager on the promotion request. Ask for the current decision, next steps and expected timeline."
   },
   {
     "id": "work-review",
     "title": "Review Jira tickets and Confluence documentation",
     "category": "Work",
     "priority": "High",
-    "done": false
+    "done": false,
+    "notes": "Review assigned Jira tickets and Confluence pages. Update progress, test evidence, pending actions and any blockers."
   },
   {
     "id": "work-ticket-followup",
     "title": "Check outstanding work ticket fixes and verification",
     "category": "Work",
     "priority": "High",
-    "done": false
+    "done": false,
+    "notes": "Review the outstanding automated UI test fixes and device auto-lock investigation. Confirm regression coverage, ticket updates and remaining actions."
   },
   {
     "id": "work-training-access",
     "title": "Check training portal access",
     "category": "Work",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Check whether the required training account has been provisioned. Follow up with support if access is still unavailable."
   },
   {
     "id": "content-upload",
     "title": "Upload YouTube video",
     "category": "Content",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Prepare and upload the next AI World 360 YouTube video or Short. Check title, description, tags, thumbnail, copyright and publishing settings."
   },
   {
     "id": "content-instagram",
     "title": "Upload Instagram video",
     "category": "Content",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Publish the corresponding Instagram Reel with a suitable cover, caption and hashtags. Verify playback after publishing."
   },
   {
     "id": "content-analytics",
     "title": "Review YouTube and Instagram analytics",
     "category": "Content",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Review views, retention, engagement, reach and follower or subscriber growth for recent uploads on both platforms. Note improvements for the next video."
   },
   {
     "id": "personal-car",
     "title": "Arrange car servicing",
     "category": "Personal",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Arrange a service appointment, confirm required maintenance and estimated charges, and collect the vehicle after service."
   },
   {
     "id": "personal-docs",
     "title": "Prepare document photocopies, photos and lamination",
     "category": "Personal",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Prepare required identity-document photocopies, passport-size photos and lamination where appropriate. Keep originals and copies secure."
   },
   {
     "id": "business-signs",
     "title": "Print two plot-for-sale banners",
     "category": "Personal",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Prepare the plot-sale banner content and contact details, proofread both designs, obtain printing quotes and print two banners."
   },
   {
     "id": "personal-temple",
     "title": "Visit temple",
     "category": "Personal",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Visit the temple and complete the planned visit."
   },
   {
     "id": "finance-docs",
     "title": "Gather loan application documents",
     "category": "Finance",
     "priority": "High",
-    "done": false
+    "done": false,
+    "notes": "Prepare the required personal loan application paperwork and check the bank's current document checklist. Keep documents private."
   },
   {
     "id": "finance-salary-statements",
     "title": "Collect salary slips and bank statements",
     "category": "Finance",
     "priority": "High",
-    "done": false
+    "done": false,
+    "notes": "Collect the required recent salary slips and bank statements, verify that they are complete, and organize them for the loan application."
   },
   {
     "id": "finance-eligibility",
     "title": "Confirm SBI personal loan eligibility",
     "category": "Finance",
     "priority": "High",
-    "done": false
+    "done": false,
+    "notes": "Ask SBI to confirm personal loan eligibility, maximum sanctioned amount, interest rate, tenure, fees and required documents before applying."
   },
   {
     "id": "business-land",
     "title": "Find three acres of land for dairy farm lease",
     "category": "Business",
     "priority": "High",
-    "done": false
+    "done": false,
+    "notes": "Shortlist approximately three acres of lease land in West Godavari, prioritizing the Tanuku area. Confirm whether dairy shed construction and fodder cultivation are permitted."
   },
   {
     "id": "dairy-site-check",
     "title": "Check water, electricity, road access and rent",
     "category": "Business",
     "priority": "High",
-    "done": false
+    "done": false,
+    "notes": "Inspect shortlisted dairy sites for year-round water, power, vehicle access, drainage, lease rent, deposit and construction permission."
   },
   {
     "id": "dairy-machinery",
     "title": "Enquire about milk processing and dung cake machines",
     "category": "Business",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Obtain quotations for cream separation, ghee processing and dung cake production machines. Compare capacity, automation, power use, warranty and installation costs."
   },
   {
     "id": "dairy-buyers",
     "title": "Identify milk and dung cake buyers",
     "category": "Business",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Find potential daily milk buyers, tea centres and dung cake buyers in West Godavari. Confirm quantity, purchase price, collection or delivery terms and payment cycle."
   },
   {
     "id": "business-gst",
     "title": "Review Value Mela GST requirements",
     "category": "Business",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Review GST registration requirements for Value Mela, including interstate sales and whether the planned business structure can support other activities."
   },
   {
     "id": "business-registration",
     "title": "Review Viswatra registration requirements",
     "category": "Business",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Review registration options for the Viswatra umbrella business, GST structure, trade names and trademark requirements before committing to registration."
   },
   {
     "id": "business-careerscope",
     "title": "Review CareerScope progress",
     "category": "Business",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Check CareerScope's current roadmap, verified versus partial items, open engineering blockers and CI results. Identify the next eligible item."
   },
   {
     "id": "business-factori-price-followup-2026-11-26",
     "title": "Email Factori team to follow up on price update completion",
     "category": "Business",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Send a follow-up email to the Factori team asking whether the requested product price updates have been completed. Request confirmation and an expected completion date for any remaining changes."
   }
 ]

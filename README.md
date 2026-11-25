@@ -15,7 +15,7 @@ A single-user, mobile-friendly personal checklist for Google Chrome. Hosted on G
 
 ## Missing tasks or an empty list
 
-Open All or Completed to check whether tasks have already been completed. Use the refresh icon to merge new public plan entries. Deleted task IDs are deliberately remembered to prevent deleted tasks returning. Local tasks and completion history are specific to the browser profile; private browsing does not share them. Do not clear site data to refresh the UI. Export a backup before restoring data.
+Open All or Completed to check whether tasks have already been completed. Use the refresh icon to merge new public plan entries and fill empty notes with published task details. Existing nonempty notes are preserved. Deleted task IDs are deliberately remembered to prevent deleted tasks returning. Local tasks and completion history are specific to the browser profile; private browsing does not share them. Do not clear site data to refresh the UI. Export a backup before restoring data.
 
 ## Run locally
 

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101c31"><meta name="apple-mobile-web-app-capable" content="yes"><title>Daily • Personal Planner</title><link rel="icon" href="./assets/logo.svg" type="image/svg+xml"><link rel="stylesheet" href="./assets/css/main.css?v=17"><link rel="manifest" href="./manifest.webmanifest"></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101c31"><meta name="apple-mobile-web-app-capable" content="yes"><title>Daily • Personal Planner</title><link rel="icon" href="./assets/logo.svg" type="image/svg+xml"><link rel="stylesheet" href="./assets/css/main.css?v=18"><link rel="manifest" href="./manifest.webmanifest"></head>
 <body><main><header><div class="top"><div class="brand"><img src="./assets/logo.svg" alt="">Daily<span style="font-weight:400;color:#b8d6c5"> / planner</span></div><button id="theme" aria-label="Toggle light or dark theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 15.5A8.7 8.7 0 0 1 8.5 4 8.8 8.8 0 1 0 20 15.5Z"/></svg></button></div><div class="hero"><time id="today-date" class="today-date"></time><h1>Make today count.</h1><p class="intro">Your personal workspace, one task at a time.</p><img src="./assets/focus.svg" alt=""></div><div class="stats"><div class="stat"><strong id="total">0</strong><small>Total</small></div><div class="stat"><strong id="done">0</strong><small>Completed</small></div><div class="stat"><strong id="pending">0</strong><small>Pending</small></div></div><p class="between"><span>Progress</span><strong id="percent">0%</strong></p><div class="ring" id="ring" aria-hidden="true"><span id="ring-value">0%</span></div><progress id="progress" value="0" max="100" aria-label="Completion progress"></progress></header>
 <div class="toolbar"><h2>Your tasks</h2><button id="quick-add" aria-label="Add task" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button><button id="refresh" aria-label="Refresh checklist" title="Refresh checklist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2 6M20 5v6h-6"/></svg></button></div><p id="sync" class="sync" role="status" aria-live="polite"></p><p id="warning" role="alert"></p><div class="workspace"><section aria-label="Task workspace"><nav class="tabs" aria-label="Task filter"><button data-filter="pending" aria-pressed="true">Pending</button><button data-filter="done" aria-pressed="false">Completed</button><button data-filter="all" aria-pressed="false">All</button></nav><div id="list"></div></section><aside class="sidebar"><details id="manage"><summary>Manage tasks</summary><h2 id="form-heading">New task</h2><form id="form" class="form"><input id="title" required maxlength="240" placeholder="What needs to be done?" aria-label="Task title"><div class="fields"><select id="category" aria-label="Category"><option>Work</option><option>Content</option><option>Personal</option><option>Finance</option><option>Business</option><option>Other</option></select><select id="priority" aria-label="Priority"><option>Normal</option><option>High</option><option>Low</option></select></div><label for="custom-category">New category (optional)</label><input id="custom-category" maxlength="40" placeholder="Category name"><label for="repeat">Repeat</label><select id="repeat"><option value="none">Does not repeat</option><option value="daily">Daily after completion</option><option value="weekly">Weekly after completion</option></select><label for="notes">Notes (optional)</label><textarea id="notes" maxlength="1000" rows="3" placeholder="Task details"></textarea><button class="primary" type="submit">Add task</button><button id="cancel-edit" type="button" hidden>Cancel</button></form><h2>Appearance</h2><select id="appearance" aria-label="Appearance preference"><option value="auto">Automatic</option><option value="light">Light</option><option value="dark">Dark</option></select><h2>Checklist backup</h2><div class="tools"><button id="export">Export checklist</button><button id="import">Import checklist</button><button id="recovery">Export recovery data</button><input hidden type="file" id="file" accept="application/json,.json"></div><p id="notice" class="notice" role="status" aria-live="polite"></p></details></aside></div></main><div id="celebration" class="celebration" role="status" aria-live="polite"><span class="celebration-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span><span class="celebration-text"></span><button id="undo" type="button">Undo</button><span class="sparkles" aria-hidden="true"><i style="--angle:0deg"></i><i style="--angle:45deg"></i><i style="--angle:90deg"></i><i style="--angle:135deg"></i><i style="--angle:180deg"></i><i style="--angle:225deg"></i><i style="--angle:270deg"></i><i style="--angle:315deg"></i></span></div>
 <script type="application/json" id="starter-plan">[
@@ -8,168 +8,192 @@
     "title": "Complete pending GCP technical support case",
     "category": "Work",
     "priority": "High",
-    "done": false
+    "done": false,
+    "notes": "Collect the last two weeks of order delivery delay evidence from New Relic and GCP. Summarize findings, draft the support case, and obtain internal review before submission."
   },
   {
     "id": "work-time",
     "title": "Submit timesheet",
     "category": "Work",
     "priority": "High",
-    "done": false
+    "done": false,
+    "notes": "Review the hours for the current timesheet period, correct any missing entries and submit before the deadline."
   },
   {
     "id": "work-career",
     "title": "Follow up with HR on promotion and career progression",
     "category": "Work",
     "priority": "High",
-    "done": false
+    "done": false,
+    "notes": "Follow up with HR and the relevant manager on the promotion request. Ask for the current decision, next steps and expected timeline."
   },
   {
     "id": "work-review",
     "title": "Review Jira tickets and Confluence documentation",
     "category": "Work",
     "priority": "High",
-    "done": false
+    "done": false,
+    "notes": "Review assigned Jira tickets and Confluence pages. Update progress, test evidence, pending actions and any blockers."
   },
   {
     "id": "work-ticket-followup",
     "title": "Check outstanding work ticket fixes and verification",
     "category": "Work",
     "priority": "High",
-    "done": false
+    "done": false,
+    "notes": "Review the outstanding automated UI test fixes and device auto-lock investigation. Confirm regression coverage, ticket updates and remaining actions."
   },
   {
     "id": "work-training-access",
     "title": "Check training portal access",
     "category": "Work",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Check whether the required training account has been provisioned. Follow up with support if access is still unavailable."
   },
   {
     "id": "content-upload",
     "title": "Upload YouTube video",
     "category": "Content",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Prepare and upload the next AI World 360 YouTube video or Short. Check title, description, tags, thumbnail, copyright and publishing settings."
   },
   {
     "id": "content-instagram",
     "title": "Upload Instagram video",
     "category": "Content",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Publish the corresponding Instagram Reel with a suitable cover, caption and hashtags. Verify playback after publishing."
   },
   {
     "id": "content-analytics",
     "title": "Review YouTube and Instagram analytics",
     "category": "Content",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Review views, retention, engagement, reach and follower or subscriber growth for recent uploads on both platforms. Note improvements for the next video."
   },
   {
     "id": "personal-car",
     "title": "Arrange car servicing",
     "category": "Personal",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Arrange a service appointment, confirm required maintenance and estimated charges, and collect the vehicle after service."
   },
   {
     "id": "personal-docs",
     "title": "Prepare document photocopies, photos and lamination",
     "category": "Personal",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Prepare required identity-document photocopies, passport-size photos and lamination where appropriate. Keep originals and copies secure."
   },
   {
     "id": "business-signs",
     "title": "Print two plot-for-sale banners",
     "category": "Personal",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Prepare the plot-sale banner content and contact details, proofread both designs, obtain printing quotes and print two banners."
   },
   {
     "id": "personal-temple",
     "title": "Visit temple",
     "category": "Personal",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Visit the temple and complete the planned visit."
   },
   {
     "id": "finance-docs",
     "title": "Gather loan application documents",
     "category": "Finance",
     "priority": "High",
-    "done": false
+    "done": false,
+    "notes": "Prepare the required personal loan application paperwork and check the bank's current document checklist. Keep documents private."
   },
   {
     "id": "finance-salary-statements",
     "title": "Collect salary slips and bank statements",
     "category": "Finance",
     "priority": "High",
-    "done": false
+    "done": false,
+    "notes": "Collect the required recent salary slips and bank statements, verify that they are complete, and organize them for the loan application."
   },
   {
     "id": "finance-eligibility",
     "title": "Confirm SBI personal loan eligibility",
     "category": "Finance",
     "priority": "High",
-    "done": false
+    "done": false,
+    "notes": "Ask SBI to confirm personal loan eligibility, maximum sanctioned amount, interest rate, tenure, fees and required documents before applying."
   },
   {
     "id": "business-land",
     "title": "Find three acres of land for dairy farm lease",
     "category": "Business",
     "priority": "High",
-    "done": false
+    "done": false,
+    "notes": "Shortlist approximately three acres of lease land in West Godavari, prioritizing the Tanuku area. Confirm whether dairy shed construction and fodder cultivation are permitted."
   },
   {
     "id": "dairy-site-check",
     "title": "Check water, electricity, road access and rent",
     "category": "Business",
     "priority": "High",
-    "done": false
+    "done": false,
+    "notes": "Inspect shortlisted dairy sites for year-round water, power, vehicle access, drainage, lease rent, deposit and construction permission."
   },
   {
     "id": "dairy-machinery",
     "title": "Enquire about milk processing and dung cake machines",
     "category": "Business",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Obtain quotations for cream separation, ghee processing and dung cake production machines. Compare capacity, automation, power use, warranty and installation costs."
   },
   {
     "id": "dairy-buyers",
     "title": "Identify milk and dung cake buyers",
     "category": "Business",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Find potential daily milk buyers, tea centres and dung cake buyers in West Godavari. Confirm quantity, purchase price, collection or delivery terms and payment cycle."
   },
   {
     "id": "business-gst",
     "title": "Review Value Mela GST requirements",
     "category": "Business",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Review GST registration requirements for Value Mela, including interstate sales and whether the planned business structure can support other activities."
   },
   {
     "id": "business-registration",
     "title": "Review Viswatra registration requirements",
     "category": "Business",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Review registration options for the Viswatra umbrella business, GST structure, trade names and trademark requirements before committing to registration."
   },
   {
     "id": "business-careerscope",
     "title": "Review CareerScope progress",
     "category": "Business",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Check CareerScope's current roadmap, verified versus partial items, open engineering blockers and CI results. Identify the next eligible item."
   },
   {
     "id": "business-factori-price-followup-2026-11-26",
     "title": "Email Factori team to follow up on price update completion",
     "category": "Business",
     "priority": "Normal",
-    "done": false
+    "done": false,
+    "notes": "Send a follow-up email to the Factori team asking whether the requested product price updates have been completed. Request confirmation and an expected completion date for any remaining changes."
   }
 ]
-</script><script src="./assets/js/core.js?v=17"></script><script src="./assets/js/app.js?v=17"></script></body></html>
+</script><script src="./assets/js/core.js?v=18"></script><script src="./assets/js/app.js?v=18"></script></body></html>
