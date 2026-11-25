@@ -1,65 +1,52 @@
-# Architecture and engineering decisions
+# Architecture
 
-## Current architecture
+## Scope and responsibilities
 
-The application is a dependency-free static frontend. The presentation, event handlers, validation and persistence adapter reside in index.html; they are logical responsibilities, not independent deployed services.
+A static HTML shell, consolidated stylesheet, pure task model (core.js), browser controller (app.js), public task manifest and a scoped service worker. No backend or database. The controller owns rendering, user events, persistence and refresh. The model validates and normalizes records, migrates legacy data, merges plans and performs rollover.
 
 ```mermaid
-flowchart LR
-    U[User] --> UI[Responsive browser UI]
-    GH[GitHub Pages] -->|HTTPS static assets| UI
-    UI --> S[In-memory task state]
-    S --> R[Derived statistics and filtered views]
-    R --> UI
-    S -->|Serialize| L[(Browser localStorage)]
-    L -->|Validate and restore| S
-    F[Local JSON file] -->|Validate and merge| S
-    S -->|Export| F
+flowchart TD
+ A[Load] --> B{Version 2 state available?}
+ B -->|Yes| C[Validate envelope]
+ B -->|No| D[Migrate legacy data]
+ C --> E[Apply local-day rollover]
+ D --> E
+ E --> F[Render active tasks and archive]
+ F --> G[Fetch public plan]
+ G --> H[Validate and merge unseen IDs]
+ H --> I[Persist single state envelope]
+ I --> F
 ```
 
-## Architectural decisions
+## Data contract
 
-| Decision | Rationale | Trade-off |
-| --- | --- | --- |
-| Static hosting | Minimal infrastructure and deployment complexity | No server-side authentication or scheduling |
-| Native browser APIs | No runtime package dependencies or build step | Manual maintenance of state and DOM rendering |
-| Browser-local persistence | Avoid transmitting personal tasks to a backend | Device-specific data, not encrypted; storage can be cleared |
-| Stable task identifiers | Deterministic import deduplication | Existing matching IDs are retained rather than overwritten |
-| Derived counters | Avoid maintaining inconsistent aggregate state | Recomputed on each render |
-| Explicit user import | Keep private task payloads outside public Git history | Manual data transfer |
+State key daily-checklist:v2 contains version, tasks, archive and seen. Legacy daily-checklist:v1 and its seen key are retained. Appearance is a separate preference. Task fields: id, title, category, priority, done, completedDay, notes, repeat and deferred. Public plan accepts legacy records without optional fields. IDs are stable, unique and limited to 240 characters; title 240, category 40, notes 1000. Active capacity 500; archive validation capacity 50,000. Browser quota may impose a much lower practical limit. No automatic history deletion is performed.
 
-## Persistence contract
-
-Storage key: `daily-checklist:v1`. Theme preference: `daily-checklist:v1:theme`. Each task contains an ID, title, category, priority and Boolean completion state. New IDs are generated with crypto.randomUUID(), requiring a supported secure browser context. Import accepts up to 500 tasks and a file of at most 1,000,000 bytes. Titles must contain non-whitespace content and be at most 240 characters. Duplicate IDs in an imported file are rejected; existing IDs take precedence during merge. No schema migration, timestamp, audit log or daily rollover exists yet.
-
-## Task state machine
+## Lifecycle
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Pending: Create
-    Pending --> Completed: Complete
-    Completed --> Pending: Reopen
-    Pending --> [*]: Confirm deletion
-    Completed --> [*]: Confirm deletion
+ [*] --> Pending
+ Pending --> Deferred
+ Deferred --> Pending
+ Pending --> Completed
+ Deferred --> Completed
+ Completed --> Pending: Undo / reopen
+ Completed --> Archived: Later local day
+ Archived --> Pending: Restore
+ Pending --> [*]: Delete
 ```
 
-## Optional alternative architecture (out of current scope)
+Unfinished tasks remain active. Daily and weekly recurrence creates one new occurrence after completion and its due interval; an existing active occurrence suppresses duplicates. Recurrence does not backfill missed days. Insights count recorded completions only, not time spent or productivity quality.
 
-```mermaid
-flowchart LR
-    A[Authenticated mobile web app] --> B[Task API]
-    B --> C[(Private task database)]
-    D[Daily planning automation] -->|Authorized scoped write| B
-    A --> E[Identity provider]
-    B --> E
-```
+## Reliability
 
-No database or backend is planned for the current static scope. If the scope changes, define identity, authorization, data retention, task reconciliation, idempotency, API contract and operational budget. Never expose credentials or private task data in public static assets. Daily scheduling must preserve unfinished tasks and avoid asserting completion without evidence.
+The state envelope is saved in one localStorage write. Corrupt state blocks ordinary persistence; recovery export exposes raw stored values to the owner. Full restore requires confirmation and preserves the prior v2 raw value in a recovery key when storage permits. Legacy array imports merge unseen IDs. Refresh never removes local tasks. Storage events adopt external valid state; a pre-write comparison detects stale snapshots, but localStorage lacks atomic compare-and-swap and simultaneous writes can still race. Separate devices are not synchronized.
 
-## Known risks
+## Offline and delivery
 
-Browser storage failures currently leave changes in memory and display a warning. Invalid stored data falls back to an empty view; recovery behavior requires testing. Concurrent tabs and devices are not reconciled. Browser-level accessibility, mobile compatibility, and deployed-site acceptance have not been established.
+The worker caches a versioned static shell on installation and removes only its own old caches. The task manifest is deliberately network-only. Embedded starter data is used for a new local state. Offline access requires a successful prior shell installation. No push or background task execution is promised. New plan publication is external to the browser; automation cannot observe local completion.
 
-## Static plan delivery
+## Trade-offs
 
-The application fetches public tasks.json on startup and manual refresh. It appends unseen IDs without overriding local edits, completion or deleted-task markers. The seen-ID registry is stored under daily-checklist:v1:seen. Plan removals do not delete local records. A recurring activity requires a new ID for each distinct occurrence. The public plan must contain only approved public-safe descriptions. Daily automation cannot observe browser-local completion state. No database is required.
+The app is intended for one person using one device. Browser storage is not encrypted or guaranteed durable; export regularly. Data recovery, simultaneous-tab writes, quota exhaustion, mobile installation and service-worker upgrades require browser acceptance testing. No formal accessibility or performance conformance is claimed.
