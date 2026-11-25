@@ -112,7 +112,7 @@ textarea{resize:vertical}
 #undo{color:white;background:transparent;border-color:#ffffff60}
 @media(min-width:800px){.workspace{grid-template-columns:minmax(0,1fr) 300px;align-items:start}.sidebar{position:sticky;top:18px}.overview{grid-template-columns:150px 1fr}.stat small{font-size:14px}}
 @media(max-width:420px){.overview{grid-template-columns:76px minmax(0,1fr);padding:14px 10px;gap:8px;border-radius:20px}.ring{width:74px;height:74px}.ring>span{width:62px;height:62px}.ring b{font-size:20px}.ring small{font-size:10px}.stat small{font-size:10px}.stat strong{font-size:22px}.toolbar h2{font-size:18px}.toolbar{gap:8px}.task{padding:5px;gap:0}.task .icon{width:40px;min-width:40px}.toggle{gap:8px}.label{font-size:14px}.hero img{opacity:.45}.hero h1,.intro{max-width:100%}}
-@media(prefers-reduced-motion:no-preference){button{transition:background .15s,color .15s}.celebration{transition:opacity .2s,transform .2s}}
+@media(prefers-reduced-motion:no-preference){button:not([data-filter]){transition:background .15s,color .15s}.celebration{transition:opacity .2s,transform .2s}}
 
 /* Final visual refinement: real settings control and compact category labels. */
 .header-actions{display:flex;align-items:center;gap:8px;flex:none}
