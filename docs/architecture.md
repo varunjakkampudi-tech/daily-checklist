@@ -43,7 +43,7 @@ stateDiagram-v2
     Completed --> [*]: Confirm deletion
 ```
 
-## Proposed future architecture (not implemented)
+## Optional alternative architecture (out of current scope)
 
 ```mermaid
 flowchart LR
@@ -54,8 +54,12 @@ flowchart LR
     B --> E
 ```
 
-Before implementing the future architecture, define identity, authorization, data retention, task reconciliation, idempotency, API contract and operational budget. Never expose credentials or private task data in public static assets. Daily scheduling must preserve unfinished tasks and avoid asserting completion without evidence.
+No database or backend is planned for the current static scope. If the scope changes, define identity, authorization, data retention, task reconciliation, idempotency, API contract and operational budget. Never expose credentials or private task data in public static assets. Daily scheduling must preserve unfinished tasks and avoid asserting completion without evidence.
 
 ## Known risks
 
 Browser storage failures currently leave changes in memory and display a warning. Invalid stored data falls back to an empty view; recovery behavior requires testing. Concurrent tabs and devices are not reconciled. Browser-level accessibility, mobile compatibility, and deployed-site acceptance have not been established.
+
+## Static plan delivery
+
+The application fetches public tasks.json on startup and manual refresh. It appends unseen IDs without overriding local edits, completion or deleted-task markers. The seen-ID registry is stored under daily-checklist:v1:seen. Plan removals do not delete local records. A recurring activity requires a new ID for each distinct occurrence. The public plan must contain only approved public-safe descriptions. Daily automation cannot observe browser-local completion state. No database is required.
