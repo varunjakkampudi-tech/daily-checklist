@@ -1,0 +1,15 @@
+/* Pure data model; shared by browser and Node tests. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.PlannerCore=api})(globalThis,function(){
+'use strict';
+const categories=['Work','Content','Personal','Finance','Business','Other'],priorities=['Normal','High','Low'],MAX=500;
+function day(d=new Date()){return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
+function valid(t){return !!(t&&typeof t.id==='string'&&t.id.length>0&&t.id.length<=240&&typeof t.title==='string'&&t.title.trim()&&t.title.length<=240&&categories.includes(t.category)&&priorities.includes(t.priority)&&typeof t.done==='boolean'&&(t.completedDay==null||(/^\d{4}-\d{2}-\d{2}$/.test(t.completedDay)&&typeof t.completedDay==='string')))}
+function records(a,limit=MAX){if(!Array.isArray(a)||a.length>limit||!a.every(valid)||new Set(a.map(t=>t.id)).size!==a.length)throw Error('Invalid task records');return a.map(t=>({id:t.id,title:t.title,category:t.category,priority:t.priority,done:t.done,completedDay:t.completedDay||null}))}
+function empty(){return {version:2,tasks:[],archive:[],seen:[]}}
+function decode(raw){const s=typeof raw==='string'?JSON.parse(raw):raw;if(!s||s.version!==2||!Array.isArray(s.seen)||!s.seen.every(x=>typeof x==='string'&&x.length<=240)||new Set(s.seen).size!==s.seen.length)throw Error('Invalid checklist backup');const tasks=records(s.tasks),archive=records(s.archive,10000);if(archive.some(t=>!t.done)||new Set([...tasks,...archive].map(t=>t.id)).size!==tasks.length+archive.length)throw Error('Invalid archive');return {version:2,tasks,archive,seen:[...new Set([...s.seen,...tasks.map(t=>t.id),...archive.map(t=>t.id)])]}}
+function migrate(raw,seenRaw,today){const tasks=records(JSON.parse(raw||'[]'));const seen=JSON.parse(seenRaw||'[]');return decode({version:2,tasks:tasks.map(t=>({...t,completedDay:t.done?(t.completedDay||today):null})),archive:[],seen})}
+function rollover(s,today){const old=s.tasks.filter(t=>t.done&&t.completedDay&&t.completedDay<today);if(!old.length)return s;return {...s,tasks:s.tasks.filter(t=>!old.includes(t)),archive:[...s.archive,...old]}}
+function merge(s,incoming,today){const plan=records(incoming);const known=new Set([...s.seen,...s.tasks.map(t=>t.id),...s.archive.map(t=>t.id)]);const additions=plan.filter(t=>!known.has(t.id)).map(t=>({...t,completedDay:t.done?(t.completedDay||today):null}));if(s.tasks.length+additions.length>MAX)throw Error('Active checklist limit reached');return {state:{...s,tasks:[...s.tasks,...additions],seen:[...new Set([...s.seen,...plan.map(t=>t.id)])]},count:additions.length}}
+function stats(tasks){const completed=tasks.filter(t=>t.done).length;return {total:tasks.length,completed,pending:tasks.length-completed,percent:tasks.length?Math.round(completed/tasks.length*100):0}}
+return {categories,priorities,MAX,day,valid,records,empty,decode,migrate,rollover,merge,stats};
+});
