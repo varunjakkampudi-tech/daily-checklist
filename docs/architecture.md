@@ -11,7 +11,7 @@ flowchart TD
  B -->|No| D[Migrate legacy data]
  C --> E[Apply local-day rollover]
  D --> E
- E --> F[Render active tasks and archive]
+ E --> F[Render Pending, Completed or All]
  F --> G[Fetch public plan]
  G --> H[Validate and merge unseen IDs]
  H --> I[Persist single state envelope]
@@ -20,24 +20,21 @@ flowchart TD
 
 ## Data contract
 
-State key daily-checklist:v2 contains version, tasks, archive and seen. Legacy daily-checklist:v1 and its seen key are retained. Appearance is a separate preference. Task fields: id, title, category, priority, done, completedDay, notes, repeat and deferred. Public plan accepts legacy records without optional fields. IDs are stable, unique and limited to 240 characters; title 240, category 40, notes 1000. Active capacity 500; archive validation capacity 50,000. Browser quota may impose a much lower practical limit. No automatic history deletion is performed.
+State key daily-checklist:v2 contains version, tasks, archive and seen. Legacy daily-checklist:v1 and its seen key are retained. Appearance is a separate preference. Task fields: id, title, category, priority, done, completedDay, notes, repeat, optional seriesId and legacy deferred. Public plan accepts legacy records without optional fields. IDs are stable, unique and limited to 240 characters; title 240, category 40, notes 1000. Active capacity 500; archive validation capacity 50,000. Browser quota may impose a much lower practical limit. No automatic history deletion is performed.
 
 ## Lifecycle
 
 ```mermaid
 stateDiagram-v2
  [*] --> Pending
- Pending --> Deferred
- Deferred --> Pending
  Pending --> Completed
- Deferred --> Completed
  Completed --> Pending: Undo / reopen
  Completed --> Archived: Later local day
  Archived --> Pending: Restore
  Pending --> [*]: Delete
 ```
 
-Unfinished tasks remain active. Daily and weekly recurrence creates one new occurrence after completion and its due interval; an existing active occurrence suppresses duplicates. Recurrence does not backfill missed days. Insights count recorded completions only, not time spent or productivity quality.
+Unfinished tasks remain active. Daily and weekly recurrence creates one new occurrence after completion and its due interval; an existing active occurrence suppresses duplicates. Recurrence does not backfill missed days. Archived records remain visible under Completed and All. Legacy deferred records remain pending; the deferred field is retained for backup compatibility.
 
 ## Reliability
 
@@ -45,7 +42,7 @@ The state envelope is saved in one localStorage write. Corrupt state blocks ordi
 
 ## Offline and delivery
 
-The worker caches a versioned static shell on installation and removes only its own old caches. The task manifest is deliberately network-only. Embedded starter data is used for a new local state. Offline access requires a successful prior shell installation. No push or background task execution is promised. New plan publication is external to the browser; automation cannot observe local completion.
+The worker caches a versioned static shell on installation, refreshes cached assets on successful fetches and removes only its own old caches. The task manifest is deliberately network-only. Embedded starter data is used for a new local state. Offline access requires a successful prior shell installation. No push or background task execution is promised. New plan publication is external to the browser; automation cannot observe local completion.
 
 ## Trade-offs
 
