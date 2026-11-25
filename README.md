@@ -24,15 +24,19 @@ The current delivery is a static, browser-local implementation. The application 
 | Domain | Capability | Implementation |
 | --- | --- | --- |
 | Task management | Create, edit, complete, reopen and delete | Implemented |
-| Organization | Category grouping and priority ordering | Implemented |
+| Organization | Category panels, completion counters and priority ordering | Implemented |
 | Analytics | Total, pending, completed and completion percentage | Implemented |
-| Presentation | Responsive layout and theme selection | Implemented |
+| Presentation | Responsive category panels, icon controls and theme selection | Implemented |
 | Persistence | Local storage and restoration | Implemented |
 | Portability | Validated JSON import and export | Implemented |
 | Daily planning | Public JSON plan refresh with stable IDs | Implemented |
 | Synchronization | Cross-device completion | Out of scope |
 
 Implementation labels describe source availability, not independently verified production acceptance.
+
+## Interface design
+
+The forest-green dashboard uses custom vector branding, compact icon controls, visually distinct category panels, category-level completion counters, and a collapsible management area. Search is intentionally omitted. Task actions retain accessible names; operational warnings appear only when relevant. The illustration above is a design reference, not a browser screenshot.
 
 ## System architecture
 
@@ -100,6 +104,9 @@ The public plan is fetched on startup and through Refresh plan. New identifiers 
 ```text
 daily-checklist/
 ├── index.html
+├── assets/
+│   ├── logo.svg
+│   └── focus.svg
 ├── tasks.json
 ├── tasks.example.json
 ├── .nojekyll
