@@ -1,5 +1,13 @@
 # Changelog
 
+## Original interface maintenance
+
+- Retain the original visual design and three task tabs.
+- Validate cache-versioned script references in CI.
+- Refresh cached assets from the network and avoid unnecessary list rendering on unchanged plans.
+- Preserve recurrence ordering when older archive records have no completion date.
+
+
 ## Personal Chrome planner
 
 - Local date in the header; exactly three task tabs.

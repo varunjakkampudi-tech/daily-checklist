@@ -5,6 +5,6 @@ import C from '../assets/js/core.js';
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const plan=JSON.parse(read('tasks.json'));
 test('public plan is valid, unique and pending',()=>{assert.deepEqual(C.records(plan).map(t=>t.id),plan.map(t=>t.id));assert.ok(plan.every(t=>!t.done&&C.categories.includes(t.category)))});
-test('static application references existing assets',()=>{const html=read('index.html');for(const match of html.matchAll(/(?:src|href)="\.\/([^"]+)"/g)){assert.ok(existsSync(new URL('../'+match[1],import.meta.url)),match[1])}assert.match(html,/src="\.\/assets\/js\/core\.js"[\s\S]*src="\.\/assets\/js\/app\.js"/)});
+test('static application references existing assets',()=>{const html=read('index.html');for(const match of html.matchAll(/(?:src|href)="\.\/([^"]+)"/g)){assert.ok(existsSync(new URL('../'+match[1],import.meta.url)),match[1])}assert.match(html,/src="\.\/assets\/js\/core\.js(?:\?[^"#]*)?"[\s\S]*src="\.\/assets\/js\/app\.js(?:\?[^"#]*)?"/)});
 test('refresh preserves completions and deletion markers',()=>{const sample={id:'fixture',title:'Fixture',category:'Work',priority:'High',done:false};const s=C.merge(C.empty(),[sample],'2026-11-26').state;s.tasks[0].done=true;s.tasks[0].completedDay='2026-11-26';assert.equal(C.merge(s,[sample],'2026-11-26').state.tasks[0].done,true);s.tasks=[];assert.equal(C.merge(s,[sample],'2026-11-26').count,0)});
 test('invalid and duplicate records rejected',()=>{assert.throws(()=>C.records([{}]));assert.throws(()=>C.records([plan[0],plan[0]]))});

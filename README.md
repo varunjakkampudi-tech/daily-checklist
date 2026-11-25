@@ -43,7 +43,7 @@ Playwright starts its own local server on port 8000. For manual use, run `python
 
 ## Release
 
-GitHub Pages serves main. Require successful checks for the exact release revision, then verify the deployed planner. Bump the shell cache version when updating cached assets. Browser coverage targets Chromium, not Firefox or WebKit.
+GitHub Pages serves main. Require successful checks for the exact release revision, then verify the deployed planner. Bump the shell cache version and the HTML asset query version together when updating cached assets. Browser coverage targets Chromium, not Firefox or WebKit.
 
 ## Data and privacy
 
