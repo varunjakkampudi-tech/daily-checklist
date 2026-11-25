@@ -1,0 +1,9 @@
+const test=require('node:test'),assert=require('node:assert/strict'),C=require('../assets/js/core.js');
+const task=(id,done=false,completedDay=null)=>({id,title:'Task '+id,category:'Work',priority:'High',done,completedDay});
+const day='2026-11-26';
+test('migration retains completions and tombstones',()=>{const s=C.migrate(JSON.stringify([task('a',true)]),'["deleted"]',day);assert.equal(s.tasks[0].completedDay,day);assert.ok(s.seen.includes('deleted'))});
+test('rollover archives only earlier completed tasks',()=>{const s=C.decode({version:2,tasks:[task('a',true,'2026-11-25'),task('b'),task('c',true,day)],archive:[],seen:[]});const next=C.rollover(s,day);assert.deepEqual(next.tasks.map(x=>x.id),['b','c']);assert.equal(next.archive[0].id,'a');assert.equal(C.rollover(next,day),next)});
+test('merge preserves local edits, completed states and deleted IDs',()=>{const s=C.decode({version:2,tasks:[task('a',true,day)],archive:[],seen:['gone']});const next=C.merge(s,[task('a'),task('gone'),task('b')],day);assert.equal(next.count,1);assert.equal(next.state.tasks[0].done,true);assert.equal(C.merge(next.state,[task('b')],day).count,0)});
+test('invalid input rejected',()=>{assert.throws(()=>C.records([task('a'),task('a')]));assert.throws(()=>C.records([{...task('a'),priority:'bad'}]));assert.throws(()=>C.decode('{broken'));assert.throws(()=>C.decode({version:2,tasks:[task('a')],archive:[task('a',true)],seen:[]}))});
+test('backup roundtrip and counters',()=>{const s=C.decode({version:2,tasks:[task('a'),task('b',true,day)],archive:[task('c',true,'2026-11-25')],seen:['deleted']});assert.deepEqual(C.decode(JSON.stringify(s)),s);assert.deepEqual(C.stats(s.tasks),{total:2,completed:1,pending:1,percent:50})});
+test('active capacity enforced without mutating input',()=>{const s=C.decode({version:2,tasks:Array.from({length:500},(_,i)=>task(String(i))),archive:[],seen:[]});assert.throws(()=>C.merge(s,[task('new')],day));assert.equal(s.tasks.length,500)});
