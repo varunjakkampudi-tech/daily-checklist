@@ -1,0 +1,79 @@
+[
+  {
+    "id": "work-gcp",
+    "title": "Complete pending technical support case",
+    "category": "Work",
+    "priority": "High",
+    "done": false
+  },
+  {
+    "id": "work-time",
+    "title": "Submit timesheet",
+    "category": "Work",
+    "priority": "High",
+    "done": false
+  },
+  {
+    "id": "work-career",
+    "title": "Follow up on career progression",
+    "category": "Work",
+    "priority": "High",
+    "done": false
+  },
+  {
+    "id": "work-review",
+    "title": "Review work tickets and documentation",
+    "category": "Work",
+    "priority": "High",
+    "done": false
+  },
+  {
+    "id": "content-upload",
+    "title": "Publish YouTube and Instagram videos",
+    "category": "Content",
+    "priority": "Normal",
+    "done": false
+  },
+  {
+    "id": "personal-car",
+    "title": "Arrange car servicing",
+    "category": "Personal",
+    "priority": "Normal",
+    "done": false
+  },
+  {
+    "id": "personal-docs",
+    "title": "Prepare document copies and photos",
+    "category": "Personal",
+    "priority": "Normal",
+    "done": false
+  },
+  {
+    "id": "business-signs",
+    "title": "Arrange two property sale banners",
+    "category": "Business",
+    "priority": "Normal",
+    "done": false
+  },
+  {
+    "id": "finance-docs",
+    "title": "Gather financing paperwork",
+    "category": "Finance",
+    "priority": "High",
+    "done": false
+  },
+  {
+    "id": "business-land",
+    "title": "Search for land to lease",
+    "category": "Business",
+    "priority": "High",
+    "done": false
+  },
+  {
+    "id": "personal-temple",
+    "title": "Visit temple",
+    "category": "Personal",
+    "priority": "Normal",
+    "done": false
+  }
+]
