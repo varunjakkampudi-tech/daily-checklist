@@ -1,39 +1,22 @@
-# Verification and acceptance plan
+# Verification
 
-All scenarios below are acceptance requirements, not recorded passing test results.
+## Evidence
 
-| ID | Scenario | Expected result |
-| --- | --- | --- |
-| F01 | Add a valid task | Task appears under the selected category; counters update |
-| F02 | Submit blank or whitespace-only title | No task is created |
-| F03 | Complete a pending task | Task disappears from pending and appears in completed |
-| F04 | Reopen a completed task | Task returns to pending; metrics reconcile |
-| F05 | Edit title, category and priority | Existing identifier and completion state are retained |
-| F06 | Cancel deletion | Task remains unchanged |
-| F07 | Confirm deletion | Task is removed and metrics update |
-| P01 | Reload after task mutation | Saved state is restored |
-| P02 | Storage unavailable or quota exceeded | Visible warning; in-memory changes remain available for export |
-| P03 | Malformed stored JSON | Empty task view with a warning |
-| D01 | Export and import valid data | New task identifiers are imported |
-| D02 | Import matching identifiers | Existing task records remain unchanged |
-| D03 | Import malformed JSON, invalid enum or duplicate ID | Import rejected without replacing existing state |
-| D04 | Import oversized file or collection | Import rejected |
-| U01 | Test 320, 375, 390, 768 and 1440 CSS-pixel widths | No horizontal overflow; all controls usable |
-| U02 | Toggle theme and reload | Selected theme persists |
-| A01 | Keyboard-only navigation | Controls reachable, focus visible and task operations usable |
-| A02 | VoiceOver and screen reader checks | Controls, status updates and progress announced meaningfully |
-| A03 | Contrast and zoom checks | WCAG 2.2 AA criteria assessed; no conformance claimed until verified |
-| O01 | Open deployed GitHub Pages URL | HTTPS page loads and task lifecycle functions |
-| O02 | Inspect public source and network requests | No real task data or credentials embedded |
+Nine data-model test callbacks passed in a JavaScript development harness. The committed Node test suite and Playwright suite are configured in GitHub Actions. Hosted outcomes must be checked at the exact revision; no browser pass is claimed here.
 
-## Verification environments
+| Area | Acceptance |
+|---|---|
+| Migration | Preserve old tasks, completions and seen IDs |
+| Reconciliation | Repeated refresh does not duplicate or reset tasks |
+| Lifecycle | Complete, undo, reopen, defer, resume, archive and restore |
+| Recurrence | Daily/weekly completion-relative due date, no duplicate active occurrence |
+| Backup | Validate envelope; confirm replacement; preserve prior raw data |
+| Recovery | Corrupt storage blocks writes; raw export available |
+| Appearance | Automatic local time and explicit persistent modes |
+| Accessibility | Keyboard focus, names, reduced motion, contrast and VoiceOver |
+| Responsive | 320–1440 CSS pixels, no overflow |
+| Offline | Successful prior install, reload without network, refresh failure visible |
+| Deployment | Verify HTTPS, assets, manifest, worker and task JSON |
+| Privacy | No sensitive task details in public artifacts |
 
-Target modern Chromium, Firefox, Safari and physical iPhone Safari. Record browser version, viewport, commit SHA, observed result and evidence for each run.
-
-## Known gaps
-
-No automated CI, browser test suite, physical-device test evidence, formal accessibility audit, performance benchmark, or authenticated synchronization is present. Deployment was configured by the owner but must be checked independently. Browser-local storage is not a reliable backup and concurrent tabs may overwrite each other's changes.
-
-## Release gate
-
-A release should record exact commit, test results, known deviations and deployment URL. Do not label the application production-ready until agreed acceptance requirements are met.
+Run `node --test tests/core.test.cjs` and `npx playwright test`. Record exact SHA, browser, viewport and results. The physical iPhone, offline upgrade, concurrency stress, accessibility audit and Lighthouse measurements remain unverified. Do not mark production acceptance complete until evidence is recorded.
