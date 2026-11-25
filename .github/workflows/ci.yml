@@ -31,4 +31,4 @@ jobs:
           node-version: '22'
       - run: npm install --no-save --package-lock=false @playwright/test@1.52.0
       - run: npx playwright install --with-deps chromium
-      - run: npx playwright test --browser=chromium
+      - run: npx playwright test --project=chromium
