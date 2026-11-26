@@ -8,7 +8,7 @@ test.use({serviceWorkers:'block'});
 test('owner signs in, uploads, reloads, refreshes and disconnects without losing tasks',async({page})=>{
  let row=null,logins=0,refreshes=0;
  await page.addInitScript(({key,state})=>{if(!localStorage.getItem(key))localStorage.setItem(key,JSON.stringify(state))},{key,state});
- await page.route('**/tasks.json?*',r=>r.fulfill({json:[task]}));
+ await page.route('**/tasks.json*',r=>r.fulfill({json:[task]}));
  await page.route('https://jhcuvechtcrobcepassp.supabase.co/**',async r=>{
   const u=new URL(r.request().url()),method=r.request().method();
   const headers={'access-control-allow-origin':'*','access-control-allow-headers':'*','access-control-allow-methods':'GET,POST,PATCH,OPTIONS'};
@@ -46,4 +46,8 @@ test('owner signs in, uploads, reloads, refreshes and disconnects without losing
  await expect(page.locator('#cloud-login')).toBeVisible();
  await expect(page.locator('#total')).toHaveText('1');
  expect(await page.evaluate(k=>localStorage.getItem(k+':cloud-session'),key)).toBeNull();
+ // Simulate a fresh browser with the unmodified starter plan and newer remote progress.
+ row={revision:row.revision+1,state:{...row.state,tasks:[{...row.state.tasks[0],done:true,completedDay:new Date().toISOString().slice(0,10)}]}};
+ await page.evaluate(({key,state})=>{localStorage.removeItem(key+':cloud-meta');localStorage.setItem(key,JSON.stringify(state))},{key,state});
+ await page.reload();await page.locator('#profile').click();await page.locator('#cloud-email').fill('owner@example.com');await page.locator('#cloud-password').fill('test-password');await page.locator('#cloud-login button').click();await expect(page.locator('#done')).toHaveText('1');
 });

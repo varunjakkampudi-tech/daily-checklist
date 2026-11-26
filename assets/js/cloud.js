@@ -5,14 +5,15 @@ const URL_BASE='https://jhcuvechtcrobcepassp.supabase.co';
 const KEY='sb_publishable_hBSzM_41GB5upUqYXjTmNw_r_5kht45';
 const OWNER='781a12d6-fbc5-40a3-8368-32164823cd5f';
 const LOCAL='daily-checklist:v2', META=LOCAL+':cloud-meta', SESSION=LOCAL+':cloud-session';
-function decision(local,remote,base){
+function pristine(local,seed){try{const C=typeof module==='object'&&module.exports?require('./core.js'):root.PlannerCore;const a=C.decode(local),p=C.decode(seed);return !a.archive.length&&a.tasks.every(t=>!t.done&&!t.completedDay&&!t.deferred)&&JSON.stringify(a)===JSON.stringify(p)}catch{return false}}
+function decision(local,remote,base,initial=false){
  if(local===remote)return 'equal';
- if(base===null)return 'conflict';
+ if(base===null)return initial?'pull':'conflict';
  if(remote===base)return 'push';
  if(local===base)return 'pull';
  return 'conflict';
 }
-if(typeof module==='object'&&module.exports){module.exports={decision};return}
+if(typeof module==='object'&&module.exports){module.exports={decision,pristine};return}
 const C=root.PlannerCore, $=id=>document.getElementById(id);
 let session=null,busy=false,connected=false;
 const lockName=LOCAL+':cloud-lock';
@@ -45,7 +46,7 @@ async function syncLocked(manual=false,forcePull=false){
  if(!connected||busy)return;busy=true;
  try{const local=snapshot();progress(local);const row=await read(),m=meta();
  if(!row){if(forcePull){status('No cloud copy exists. Local checklist retained.');return}if(!manual||!confirm('Upload this browser checklist, including completion history, to your private cloud account?')){status('Cloud empty. Select Sync now to upload this browser.');return}await write(local,null);status('Cloud synchronized.');return}
- const remote=canonical(row.state),action=decision(local,remote,m?.base??null);
+ const remote=canonical(row.state);let initial=false;if(!m){try{const plan=JSON.parse($('starter-plan').textContent);initial=pristine(local,{version:2,tasks:plan,archive:[],seen:plan.map(t=>t.id)});if(!initial){const res=await fetch('./tasks.json',{cache:'no-store'});if(res.ok){const plan=await res.json();initial=pristine(local,{version:2,tasks:plan,archive:[],seen:plan.map(t=>t.id)})}}}catch{}}const action=decision(local,remote,m?.base??null,initial);
  if(forcePull){if(confirm('Restore cloud checklist? Current local copy will be retained as a recovery backup.'))restore(row,local);return}
  if(action==='equal'){setMeta(row);status('Cloud synchronized.');return}
  if(action==='push'){await write(local,row);status('Cloud synchronized.');return}
@@ -59,7 +60,7 @@ $('cloud-now').onclick=()=>sync(true);
 $('cloud-pull').onclick=()=>sync(true,true);
 $('cloud-out').onclick=async()=>exclusive(async()=>{reloadSession();if(busy)return;busy=true;try{if(session)await request('/auth/v1/logout?scope=local',{method:'POST',token:await token()})}catch{}finally{session=null;connected=false;localStorage.removeItem(SESSION);controls();status('Disconnected. Local checklist retained.');busy=false}});
 try{reloadSession();progress(snapshot());if(connected)sync()}catch{status('Local storage unavailable.')}
-setInterval(()=>{if(!document.hidden){try{progress(snapshot())}catch{}sync()}},30000);
+setInterval(()=>{if(!document.hidden){try{progress(snapshot())}catch{}sync()}},10000);
 window.addEventListener('storage',e=>{if(e.key===SESSION){try{reloadSession();if(!connected)status('Disconnected. Local checklist retained.')}catch{status('Session unavailable.')}}});
 window.addEventListener('online',()=>sync());document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync()});
 })(globalThis);

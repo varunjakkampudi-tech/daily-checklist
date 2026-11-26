@@ -1,2 +1,4 @@
 const test=require('node:test'),assert=require('node:assert/strict'),{decision}=require('../assets/js/cloud.js');
 test('cloud reconciliation never overwrites divergent copies',()=>{assert.equal(decision('a','a',null),'equal');assert.equal(decision('a','b',null),'conflict');assert.equal(decision('b','a','a'),'push');assert.equal(decision('a','b','a'),'pull');assert.equal(decision('b','c','a'),'conflict')});
+
+test('only unchanged starter checklist may automatically restore without a baseline',()=>{const {pristine}=require('../assets/js/cloud.js');const t={id:'a',title:'Task',category:'Work',priority:'Normal',done:false};const seed={version:2,tasks:[t],archive:[],seen:['a']};assert.equal(pristine(seed,seed),true);assert.equal(pristine({...seed,tasks:[{...t,done:true}]},seed),false);assert.equal(pristine({...seed,tasks:[{...t,title:'Edited'}]},seed),false);assert.equal(decision('a','b',null,true),'pull')});
