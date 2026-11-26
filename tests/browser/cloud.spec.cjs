@@ -24,11 +24,13 @@ test('owner signs in, uploads, reloads, refreshes and disconnects without losing
  page.on('dialog',d=>d.accept());
  await page.goto(origin);
  await expect(page.locator('#total')).toHaveText('1');
- await page.locator('#manage summary').click();
+ await page.locator('#profile').click();
+ await expect(page.locator('#cloud-account')).toBeFocused();
  await page.locator('#cloud-email').fill('owner@example.com');
  await page.locator('#cloud-password').fill('test-password');
  await page.locator('#cloud-login button').click();
  await expect(page.locator('#cloud-status')).toHaveText('Cloud synchronized.');
+ await expect(page.locator('#profile-state')).toHaveText('Owner account signed in');
  expect(logins).toBe(1);
  expect(row.state.tasks[0].id).toBe(task.id);
  await page.reload();

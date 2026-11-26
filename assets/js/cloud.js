@@ -17,14 +17,14 @@ const C=root.PlannerCore, $=id=>document.getElementById(id);
 let session=null,busy=false,connected=false;
 const lockName=LOCAL+':cloud-lock';
 function exclusive(fn){if(!navigator.locks){status('Cloud requires a browser supporting Web Locks. Local data retained.');return Promise.resolve()}return navigator.locks.request(lockName,fn).catch(()=>status('Cloud session unavailable. Local copy retained.'))}
-function reloadSession(){try{session=JSON.parse(localStorage.getItem(SESSION)||'null')}catch{session=null}connected=!!(typeof session?.access_token==='string'&&typeof session?.refresh_token==='string'&&Number.isFinite(session?.expires_at));if(!connected){session=null;localStorage.removeItem(SESSION)}controls()}
+function reloadSession(){try{session=JSON.parse(localStorage.getItem(SESSION)||'null')}catch{session=null}connected=!!(typeof session?.access_token==='string'&&typeof session?.refresh_token==='string'&&Number.isFinite(session?.expires_at));if(!connected){session=null;if(localStorage.getItem(SESSION)!==null)localStorage.removeItem(SESSION)}controls()}
 function clearSession(){localStorage.removeItem(SESSION);session=null;connected=false;controls()}
 const status=s=>{$('cloud-status').textContent=s};
 const canonical=s=>JSON.stringify(C.decode(s));
 function snapshot(){const raw=localStorage.getItem(LOCAL);if(!raw)throw Error('No saved checklist.');return canonical(raw)}
 function meta(){try{return JSON.parse(localStorage.getItem(META)||'null')}catch{return null}}
 function setMeta(row){localStorage.setItem(META,JSON.stringify({revision:row.revision,base:canonical(row.state)}))}
-function controls(){ $('cloud-login').hidden=connected;for(const id of ['cloud-now','cloud-out','cloud-pull'])$(id).hidden=!connected }
+function controls(){ $('profile-dot').hidden=!connected;$('profile-state').textContent=connected?'Owner account signed in':'Not signed in';$('cloud-login').hidden=connected;for(const id of ['cloud-now','cloud-out','cloud-pull'])$(id).hidden=!connected }
 async function request(path,{method='GET',body,token,prefer}={}){
  const headers={apikey:KEY,'Content-Type':'application/json'};
  if(token)headers.Authorization='Bearer '+token;
@@ -54,6 +54,7 @@ async function syncLocked(manual=false,forcePull=false){
  }catch(e){if(e.status===401||e.status===403||e.status===400){if(e.status===401||e.status===403){clearSession();status('Session expired or access denied. Sign in again. Local copy retained.');return}}status('Cloud sync paused: '+e.message+' Local copy retained.')}finally{busy=false}
 }
 $('cloud-login').onsubmit=async e=>{e.preventDefault();await exclusive(async()=>{reloadSession();if(busy||connected)return;busy=true;try{const s=await request('/auth/v1/token?grant_type=password',{method:'POST',body:{email:$('cloud-email').value,password:$('cloud-password').value}});storeSession(s);status('Signed in. Select Sync now to initialize.')}catch{status('Sign-in failed. Check owner credentials and connectivity.')}finally{$('cloud-password').value='';busy=false}if(connected)await syncLocked(true)});};
+$('profile').onclick=()=>{$('manage').open=true;$('cloud-account').focus();$('cloud-account').scrollIntoView({block:'center'});};
 $('cloud-now').onclick=()=>sync(true);
 $('cloud-pull').onclick=()=>sync(true,true);
 $('cloud-out').onclick=async()=>exclusive(async()=>{reloadSession();if(busy)return;busy=true;try{if(session)await request('/auth/v1/logout?scope=local',{method:'POST',token:await token()})}catch{}finally{session=null;connected=false;localStorage.removeItem(SESSION);controls();status('Disconnected. Local checklist retained.');busy=false}});
