@@ -48,3 +48,7 @@ GitHub Pages serves main. Require successful checks for the exact release revisi
 The public repository and plan are visible to others. Keep sensitive tasks and notes in local browser storage; export backups regularly. No authentication, encryption or cross-device synchronization is provided. Clearing browser data can remove local tasks. See the security documentation.
 
 No production certification is implied by this README.
+
+## Optional cloud sync
+
+Open Manage tasks and sign in using the pre-created owner account. On the original browser, confirm the first upload when prompted. Cloud sync uses a revision-conditioned update; divergent copies stop synchronization rather than overwrite changes. Export local backup before restoring a cloud copy. The browser retains local data on disconnect. Completion counts are based on currently completed records, not a historical event ledger. Credentials are never committed; only the publishable key is included. Live owner login and migration must be verified before declaring full production acceptance.

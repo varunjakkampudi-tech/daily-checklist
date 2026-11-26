@@ -1,0 +1,2 @@
+const test=require('node:test'),assert=require('node:assert/strict'),{decision}=require('../assets/js/cloud.js');
+test('cloud reconciliation never overwrites divergent copies',()=>{assert.equal(decision('a','a',null),'equal');assert.equal(decision('a','b',null),'conflict');assert.equal(decision('b','a','a'),'push');assert.equal(decision('a','b','a'),'pull');assert.equal(decision('b','c','a'),'conflict')});
