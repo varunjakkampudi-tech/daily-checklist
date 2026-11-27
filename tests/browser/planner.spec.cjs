@@ -1,5 +1,6 @@
 const {test,expect}=require('@playwright/test');
 const origin='http://127.0.0.1:8000';
+const expand=async(page,cat)=>{const group=page.locator('#list details').filter({has:page.locator('summary').filter({hasText:cat})});if(!(await group.evaluate(e=>e.open)))await group.locator('summary').click();};
 const fixture=[{id:'test-timesheet',title:'Submit timesheet',category:'Work',priority:'High',done:false}];
 test.beforeEach(async({page})=>{
   await page.addInitScript(plan=>{if(!localStorage.getItem('daily-checklist:v2'))localStorage.setItem('daily-checklist:v2',JSON.stringify({version:2,tasks:plan,archive:[],seen:plan.map(t=>t.id)}))},fixture);
@@ -8,13 +9,14 @@ test.beforeEach(async({page})=>{
 test('three tabs, completion, undo and persistence',async({page})=>{
   await page.goto(origin);await expect(page.locator('.tabs button')).toHaveText(['Pending','Completed','All']);
   await expect(page.locator('#total')).toHaveText('1');
+  await expect(page.locator('#list details[open]')).toHaveCount(0);await expand(page,'Work');
   await page.getByRole('button',{name:'Complete Submit timesheet',exact:true}).click();
   await expect(page.locator('#done')).toHaveText('1');
   await page.getByRole('button',{name:'Undo',exact:true}).click();
-  await expect(page.locator('#done')).toHaveText('0');
+  await expect(page.locator('#done')).toHaveText('0');await expand(page,'Work');
   await page.getByRole('button',{name:'Complete Submit timesheet',exact:true}).click();
   await page.reload();await expect(page.locator('#done')).toHaveText('1');
-  await page.locator('[data-filter=done]').click();await expect(page.getByRole('button',{name:'Reopen Submit timesheet',exact:true})).toBeVisible();
+  await page.locator('[data-filter=done]').click();await expand(page,'Work');await expect(page.getByRole('button',{name:'Reopen Submit timesheet',exact:true})).toBeVisible();
   await page.locator('[data-filter=all]').click();await expect(page.getByRole('button',{name:'Reopen Submit timesheet',exact:true})).toBeVisible();
   await page.locator('#manage summary').click();await page.locator('#appearance').selectOption('dark');
   await page.reload();await expect(page.locator('body')).toHaveClass(/dark/);
@@ -25,6 +27,7 @@ test('create task with notes, category and recurrence',async({page})=>{
   await page.locator('#title').fill('Read documentation');await page.locator('#custom-category').fill('Learning');
   await page.locator('#notes').fill('Review API');await page.locator('#repeat').selectOption('weekly');
   await page.locator('#form button[type=submit]').click();
+  await expand(page,'Learning');
   await expect(page.getByRole('button',{name:'Complete Read documentation',exact:true})).toBeVisible();
   await expect(page.locator('.task-note')).toHaveText('Review API');
 });
@@ -49,12 +52,15 @@ test('next day retains pending and completed tasks when a new plan arrives',asyn
   await expect(page.locator('#total')).toHaveText('3');
   await expect(page.locator('#done')).toHaveText('1');
   await expect(page.locator('#pending')).toHaveText('2');
+  await expand(page,'Personal');await expand(page,'Work');
   await expect(page.getByRole('button',{name:'Complete Old pending task',exact:true})).toBeVisible();
   await expect(page.getByRole('button',{name:'Complete New daily task',exact:true})).toBeVisible();
   await expect(page.getByRole('button',{name:'Reopen Submit timesheet',exact:true})).toHaveCount(0);
-  await page.locator('[data-filter=done]').click();
+  await page.locator('[data-filter=done]').click();await expand(page,'Work');
   await expect(page.getByRole('button',{name:'Reopen Submit timesheet',exact:true})).toBeVisible();
   await expect(page.locator('#list .task')).toHaveCount(1);
   await page.locator('[data-filter=all]').click();
   await expect(page.locator('#list .task')).toHaveCount(3);
 });
+
+test('all categories start collapsed and expanded state survives ordinary render but resets on reload',async({page})=>{await page.goto(origin);await expect(page.locator('#list details')).toHaveCount(1);await expect(page.locator('#list details[open]')).toHaveCount(0);await expand(page,'Work');await expect(page.locator('#list details[open]')).toHaveCount(1);await page.locator('[data-filter=all]').click();await expect(page.locator('#list details[open]')).toHaveCount(1);await page.reload();await expect(page.locator('#list details[open]')).toHaveCount(0);});
