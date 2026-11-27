@@ -25,7 +25,7 @@ const canonical=s=>JSON.stringify(C.decode(s));
 function snapshot(){const raw=localStorage.getItem(LOCAL);if(!raw)throw Error('No saved checklist.');return canonical(raw)}
 function meta(){try{return JSON.parse(localStorage.getItem(META)||'null')}catch{return null}}
 function setMeta(row){localStorage.setItem(META,JSON.stringify({revision:row.revision,base:canonical(row.state)}))}
-function controls(){ $('profile-dot').hidden=!connected;$('profile-state').textContent=connected?'Owner account signed in':'Not signed in';$('cloud-login').hidden=connected;for(const id of ['cloud-now','cloud-out','cloud-pull'])$(id).hidden=!connected }
+function controls(){ $('profile-dot').hidden=!connected;$('profile-state').textContent=connected?'Owner account signed in':'Not signed in';$('cloud-login').hidden=connected;for(const id of ['cloud-out','cloud-pull'])$(id).hidden=!connected }
 async function request(path,{method='GET',body,token,prefer}={}){
  const headers={apikey:KEY,'Content-Type':'application/json'};
  if(token)headers.Authorization='Bearer '+token;
@@ -45,7 +45,7 @@ async function sync(manual=false,forcePull=false){return exclusive(async()=>{rel
 async function syncLocked(manual=false,forcePull=false){
  if(!connected||busy)return;busy=true;
  try{const local=snapshot();progress(local);const row=await read(),m=meta();
- if(!row){if(forcePull){status('No cloud copy exists. Local checklist retained.');return}if(!manual||!confirm('Upload this browser checklist, including completion history, to your private cloud account?')){status('Cloud empty. Select Sync now to upload this browser.');return}await write(local,null);status('Cloud synchronized.');return}
+ if(!row){if(forcePull){status('No cloud copy exists. Local checklist retained.');return}if(!manual||!confirm('Upload this browser checklist, including completion history, to your private cloud account?')){status('Cloud empty. Tap the top refresh icon to upload this browser.');return}await write(local,null);status('Cloud synchronized.');return}
  const remote=canonical(row.state);let initial=false;if(!m){try{const plan=JSON.parse($('starter-plan').textContent);initial=pristine(local,{version:2,tasks:plan,archive:[],seen:plan.map(t=>t.id)});if(!initial){const res=await fetch('./tasks.json',{cache:'no-store'});if(res.ok){const plan=await res.json();initial=pristine(local,{version:2,tasks:plan,archive:[],seen:plan.map(t=>t.id)})}}}catch{}}const action=decision(local,remote,m?.base??null,initial);
  if(forcePull){if(confirm('Restore cloud checklist? Current local copy will be retained as a recovery backup.'))restore(row,local);return}
  if(action==='equal'){setMeta(row);status('Cloud synchronized.');return}
@@ -54,9 +54,9 @@ async function syncLocked(manual=false,forcePull=false){
  status('Different local and cloud copies. Export local backup, then choose Restore cloud copy. No data overwritten.');
  }catch(e){if(e.status===401||e.status===403||e.status===400){if(e.status===401||e.status===403){clearSession();status('Session expired or access denied. Sign in again. Local copy retained.');return}}status('Cloud sync paused: '+e.message+' Local copy retained.')}finally{busy=false}
 }
-$('cloud-login').onsubmit=async e=>{e.preventDefault();await exclusive(async()=>{reloadSession();if(busy||connected)return;busy=true;try{const s=await request('/auth/v1/token?grant_type=password',{method:'POST',body:{email:$('cloud-email').value,password:$('cloud-password').value}});storeSession(s);status('Signed in. Select Sync now to initialize.')}catch{status('Sign-in failed. Check owner credentials and connectivity.')}finally{$('cloud-password').value='';busy=false}if(connected)await syncLocked(true)});};
+$('cloud-login').onsubmit=async e=>{e.preventDefault();await exclusive(async()=>{reloadSession();if(busy||connected)return;busy=true;try{const s=await request('/auth/v1/token?grant_type=password',{method:'POST',body:{email:$('cloud-email').value,password:$('cloud-password').value}});storeSession(s);status('Signed in. Tap the top refresh icon to initialize.')}catch{status('Sign-in failed. Check owner credentials and connectivity.')}finally{$('cloud-password').value='';busy=false}if(connected)await syncLocked(true)});};
 $('profile').onclick=()=>{$('manage').open=true;$('cloud-account').focus();$('cloud-account').scrollIntoView({block:'center'});};
-$('cloud-now').onclick=()=>sync(true);
+root.PlannerCloud={refresh:async()=>{await sync(true);return connected?$('cloud-status').textContent:($('cloud-status').textContent.startsWith('Session expired')?$('cloud-status').textContent:'')}};
 $('cloud-pull').onclick=()=>sync(true,true);
 $('cloud-out').onclick=async()=>exclusive(async()=>{reloadSession();if(busy)return;busy=true;try{if(session)await request('/auth/v1/logout?scope=local',{method:'POST',token:await token()})}catch{}finally{session=null;connected=false;localStorage.removeItem(SESSION);controls();status('Disconnected. Local checklist retained.');busy=false}});
 try{reloadSession();progress(snapshot());if(connected)sync()}catch{status('Local storage unavailable.')}

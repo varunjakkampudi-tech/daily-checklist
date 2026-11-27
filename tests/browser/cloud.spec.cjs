@@ -33,6 +33,9 @@ test('owner signs in, uploads, reloads, refreshes and disconnects without losing
  await expect(page.locator('#profile-state')).toHaveText('Owner account signed in');
  expect(logins).toBe(1);
  expect(row.state.tasks[0].id).toBe(task.id);
+ const extra={...task,id:'remote-new',title:'New cloud task'};row={revision:row.revision+1,state:{...row.state,tasks:[...row.state.tasks,extra],seen:[...row.state.seen,extra.id]}};
+ await page.locator('header #refresh').click();await expect(page.locator('#total')).toHaveText('2');
+ row={revision:row.revision+1,state:{...row.state,tasks:row.state.tasks.filter(t=>t.id!==extra.id)}};await page.locator('header #refresh').click();await expect(page.locator('#total')).toHaveText('1');
  await page.reload();
  await expect(page.locator('#cloud-login')).toHaveJSProperty('hidden',true);
  await expect(page.locator('#cloud-status')).toHaveText('Cloud synchronized.');
