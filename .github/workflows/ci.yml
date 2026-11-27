@@ -34,3 +34,37 @@ jobs:
       - run: npm install --no-save --package-lock=false @playwright/test@1.52.0
       - run: npx playwright install --with-deps chromium
       - run: npx playwright test --project=chromium
+
+  release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [validate, browser]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish version after exact-commit Pages deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=$(cat VERSION)
+          [[ "$version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          if gh release view "$version" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $version already exists; leaving it unchanged."
+            exit 0
+          fi
+          deployed=false
+          for attempt in $(seq 1 60); do
+            if gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$RELEASE_SHA&per_page=100" --jq '.workflow_runs[] | select(.name == "pages build and deployment" and .status == "completed" and .conclusion == "success") | .id' | grep -q .; then
+              deployed=true
+              break
+            fi
+            sleep 10
+          done
+          [[ "$deployed" == true ]] || { echo "Exact commit Pages deployment not confirmed"; exit 1; }
+          gh release create "$version" --repo "$GITHUB_REPOSITORY" --target "$RELEASE_SHA" --title "Daily Planner $version" --notes-file RELEASE_NOTES.md

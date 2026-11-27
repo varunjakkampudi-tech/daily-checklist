@@ -1,6 +1,6 @@
 # Daily Planner
 
-A single-user, mobile-friendly personal checklist for Google Chrome. Hosted on GitHub Pages; no backend or account required.
+A single-user, mobile-friendly personal checklist hosted on GitHub Pages, with offline local storage and optional authenticated Supabase synchronization. Current version: v1.0.0.
 
 [Open planner](https://varunjakkampudi-tech.github.io/daily-checklist/) · [CI](https://github.com/varunjakkampudi-tech/daily-checklist/actions) · [Architecture](docs/architecture.md) · [Verification](docs/verification.md) · [Security](SECURITY.md)
 
@@ -15,7 +15,7 @@ A single-user, mobile-friendly personal checklist for Google Chrome. Hosted on G
 
 ## Missing tasks or an empty list
 
-Open All or Completed to check whether tasks have already been completed. Use the refresh icon to merge new public plan entries and fill empty notes with published task details. Existing nonempty notes are preserved. Deleted task IDs are deliberately remembered to prevent deleted tasks returning. Local tasks and completion history are specific to the browser profile; private browsing does not share them. Do not clear site data to refresh the UI. Export a backup before restoring data.
+Open All or Completed to check whether tasks have already been completed. Use the top refresh icon to synchronize the cloud checklist and merge new public plan entries and fill empty notes with published task details. Existing nonempty notes are preserved. Deleted task IDs are deliberately remembered to prevent deleted tasks returning. Local tasks and completion history are specific to the browser profile; private browsing does not share them. Do not clear site data to refresh the UI. Export a backup before restoring data.
 
 ## Run locally
 
@@ -45,10 +45,10 @@ GitHub Pages serves main. Require successful checks for the exact release revisi
 
 ## Data and privacy
 
-The public repository and plan are visible to others. Keep sensitive tasks and notes in local browser storage; export backups regularly. No authentication, encryption or cross-device synchronization is provided. Clearing browser data can remove local tasks. See the security documentation.
+The public repository and plan are visible to others. Keep sensitive tasks and notes in local browser storage; export backups regularly. Optional owner-only cloud synchronization is available; local data is not application-level encrypted. Clearing browser data can remove local tasks. See the security documentation.
 
 No production certification is implied by this README.
 
 ## Optional cloud sync
 
-Open Manage tasks and sign in using the pre-created owner account. On the original browser, confirm the first upload when prompted. Cloud sync uses a revision-conditioned update; divergent copies stop synchronization rather than overwrite changes. Export local backup before restoring a cloud copy. The browser retains local data on disconnect. Completion counts are based on currently completed records, not a historical event ledger. Credentials are never committed; only the publishable key is included. Live owner login and migration must be verified before declaring full production acceptance.
+Open the profile icon and sign in using the pre-created owner account. On the original browser, confirm the first upload when prompted. Cloud sync uses a revision-conditioned update; divergent copies stop synchronization rather than overwrite changes. Export local backup before restoring a cloud copy. The browser retains local data on disconnect. Completion counts are based on currently completed records, not a historical event ledger. Credentials are never committed; only the publishable key is included. Live owner login and migration must be verified before declaring full production acceptance.

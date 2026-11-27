@@ -64,3 +64,5 @@ test('next day retains pending and completed tasks when a new plan arrives',asyn
 });
 
 test('all categories start collapsed and expanded state survives ordinary render but resets on reload',async({page})=>{await page.goto(origin);await expect(page.locator('#list details')).toHaveCount(1);await expect(page.locator('#list details[open]')).toHaveCount(0);await expand(page,'Work');await expect(page.locator('#list details[open]')).toHaveCount(1);await page.locator('[data-filter=all]').click();await expect(page.locator('#list details[open]')).toHaveCount(1);await page.reload();await expect(page.locator('#list details[open]')).toHaveCount(0);});
+
+test('release version and single top refresh are visible',async({page})=>{await page.goto(origin);await expect(page.locator('.release-version')).toContainText('v1.0.0');await expect(page.locator('header #refresh')).toBeVisible();await expect(page.locator('#cloud-now')).toHaveCount(0);});
